@@ -4,26 +4,121 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="css/style.css" />
+  
+  <!-- Font Awesome CDN untuk icon -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-pVjT1BXV+NQmPqV6BB9ZtKxy0zR1R8iJsv2fK35Wb8/+8OXVNhTxR+11qpo6yZzLPB+gRU7IwT3UQhv+7+1ZHg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  
   <title>Catalog</title>
+
+  <style>
+    /* Background dari gambar kamu */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      background-image: url('https://i.imgur.com/w2Ihyed.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    nav {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 15px 30px;
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #ffd700; /* emas mewah */
+    }
+
+    h1 {
+      margin: 40px 30px 20px;
+      font-size: 2.8rem;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+    }
+
+    p {
+      margin: 0 30px 40px;
+      font-size: 1.2rem;
+      max-width: 600px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+    }
+
+    ul.products {
+      list-style: none;
+      padding: 0 30px 50px;
+      max-width: 600px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 25px;
+    }
+
+    ul.products li {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      transition: background 0.3s ease;
+    }
+
+    ul.products li:hover {
+      background: rgba(255, 215, 0, 0.7); /* highlight emas */
+      color: #222;
+      cursor: pointer;
+    }
+
+    /* Responsive mobile */
+    @media (max-width: 600px) {
+      ul.products {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
   <nav>
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="catalog.html">Catalog</a></li>
-      <li><a href="about.html">About</a></li>
-    </ul>
+    <a href="index.html"><i class="fas fa-house"></i> Home</a>
+    <a href="catalog.html"><i class="fas fa-box-open"></i> Catalog</a>
+    <a href="about.html"><i class="fas fa-info-circle"></i> About</a>
   </nav>
 
   <h1>Catalog Page</h1>
-  <p>Ini adalah halaman katalog produk atau layanan kamu.</p>
+  <p>Ini adalah halaman katalog produk atau layanan kamu. Klik produk untuk info lebih lanjut.</p>
 
-  <ul>
+  <ul class="products">
     <li>Produk 1</li>
     <li>Produk 2</li>
     <li>Produk 3</li>
+    <li>Produk 4</li>
+    <li>Produk 5</li>
+    <li>Produk 6</li>
   </ul>
-  
 </body>
 </html>
