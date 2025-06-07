@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Katalog Ventus</title>
+  <meta name="description" content="Katalog Parfum Ventus">
+  <meta property="og:image" content="https://i.imgur.com/iex9U7U.jpg">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(to bottom, #111, #222);
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 0;
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 50px 20px 20px;
+      text-align: center;
+      color: #ffdd66;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      padding: 30px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+    }
+
+    .back {
+      text-align: center;
+      margin: 40px 0;
+    }
+
+    .back a {
+      color: #ffdd66;
+      text-decoration: none;
+      font-size: 1.1em;
+      font-weight: bold;
+      padding: 10px 20px;
+      border: 1px solid #ffdd66;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+
+    .back a:hover {
+      background: #ffdd66;
+      color: #111;
+    }
+
+    @media screen and (max-width: 600px) {
+      .gallery img {
+        height: 200px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Katalog Ventus</h1>
+    <p>Temukan aroma yang mencerminkan karakter Anda.</p>
+  </header>
+
+  <div class="gallery">
+    <img src="https://i.imgur.com/iex9U7U.jpg" alt="Ventus 1" />
+    <img src="https://i.imgur.com/ycY7xAi.jpeg" alt="Ventus 2" />
+    <img src="https://i.imgur.com/J50nBXC.jpeg" alt="Ventus 3" />
+    <img src="https://i.imgur.com/IQBiBo2.jpeg" alt="Ventus 4" />
+    <img src="https://i.imgur.com/Z2RPI3W.jpeg" alt="Ventus 5" />
+    <img src="https://i.imgur.com/SHjTVqP.jpeg" alt="Ventus 6" />
+  </div>
+
+  <div class="back">
+    <a href="index.html">&larr; Kembali ke Beranda</a>
+  </div>
+
+</body>
+</html>
