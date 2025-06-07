@@ -1,9 +1,75 @@
-<section id="about" style="background-color: #000; color: white; padding: 60px 20px; text-align: center;">
-  <h2 style="font-size: 2.5em; color: #e0c97f; margin-bottom: 30px;">Tentang Ventus</h2>
-  <div style="max-width: 800px; margin: 0 auto; font-size: 1.1em; line-height: 1.7;">
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ventus</title>
+  <meta name="description" content="Tentang Ventus - Wewangian mewah dengan karakter kuat dan elegan.">
+  <meta property="og:title" content="Tentang Ventus">
+  <meta property="og:description" content="Parfum Ventus menghadirkan aroma yang membebaskan dan meninggalkan kesan abadi.">
+  <meta property="og:image" content="https://i.imgur.com/iex9U7U.jpg">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('https://i.imgur.com/iex9U7U.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #f0e9d3;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px 15px;
+    }
+
+    .container {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 50px 30px;
+      border-radius: 12px;
+      max-width: 800px;
+      width: 100%;
+      animation: fadeIn 1.5s ease-out forwards;
+    }
+
+    h1 {
+      font-size: 3em;
+      color: #e0c97f;
+      text-align: center;
+      margin-bottom: 25px;
+      letter-spacing: 2px;
+    }
+
+    p {
+      font-size: 1.1em;
+      line-height: 1.7;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media screen and (max-width: 600px) {
+      h1 { font-size: 2.2em; }
+      p  { font-size: 1em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Ventus</h1>
     <p><strong>Ventus</strong> adalah lebih dari sekadar parfum — ia adalah simbol elegansi, kepribadian, dan keberanian.</p>
     <p>Terinspirasi dari kata Latin <em>“Ventus”</em> yang berarti angin, setiap aroma kami dirancang untuk menangkap esensi kebebasan dan kekuatan dalam gerakan.</p>
     <p>Dengan bahan-bahan berkualitas tinggi, kemasan mewah hitam-emas, dan filosofi yang berakar pada keanggunan modern, Ventus hadir untuk mereka yang ingin meninggalkan kesan yang abadi.</p>
     <p>Ini bukan sekadar wewangian. Ini adalah identitas.</p>
   </div>
-</section>
+</body>
+</html>
