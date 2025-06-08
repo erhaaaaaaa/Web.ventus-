@@ -186,23 +186,26 @@
         });
     }
 
+    // URL Web App Google Apps Script kamu
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw3PGwC8v_nnyYfhO7PLhv7GXfD9w-c42jkMazl_2RhiTAaKIx9HnQ1K4eISnSVxJgo/exec';
+
     function handleSubmit(event) {
       event.preventDefault();
       const form = document.getElementById("orderForm");
       const data = new FormData(form);
-      const summary = `
-Full Name: ${data.get("name")}
-Email: ${data.get("email")}
-Phone: ${data.get("phone")}
-Street Address: ${data.get("address")}
-Province: ${data.get("province")}
-City/Regency: ${data.get("city")}
-District: ${data.get("district")}
-Postal Code: ${data.get("postal")}
-Notes: ${data.get("notes") || "None"}
-      `;
-      alert("Your order has been submitted!\n\n" + summary);
-      form.reset();
+
+      // Kirim data ke Google Sheets via Web App
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',  // biar gak kena CORS error, tapi gak bisa cek respon
+        body: data
+      }).then(() => {
+        alert('Your order has been submitted successfully! Thank you.');
+        form.reset();
+      }).catch((error) => {
+        alert('Oops! Something went wrong when submitting your order.');
+        console.error(error);
+      });
     }
   </script>
 
