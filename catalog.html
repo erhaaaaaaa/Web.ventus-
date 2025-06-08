@@ -2,97 +2,189 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ventus Cart</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <title>Catalog with Cart</title>
+
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
       margin: 0;
-      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      background-image: url('https://i.imgur.com/w2Ihyed.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    .product-container {
+    nav {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 15px 30px;
       display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      padding: 20px;
-      justify-content: center;
+      gap: 30px;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #ffd700;
+    }
+
+    h1 {
+      margin: 40px 30px 20px;
+      font-size: 2.8rem;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+    }
+
+    p.description {
+      margin: 0 30px 40px;
+      font-size: 1.2rem;
+      max-width: 600px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+    }
+
+    .catalog-items {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      padding: 0 30px 50px;
+      flex-grow: 1;
     }
 
     .item {
-      background: #222;
-      padding: 15px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 20px;
       border-radius: 10px;
-      width: 200px;
       text-align: center;
-      box-shadow: 0 0 5px #333;
-      position: relative;
+      font-weight: 700;
+      font-size: 1.1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      transition: background 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .item:hover {
+      background: rgba(255, 215, 0, 0.2);
+      color: #fff;
     }
 
     .item img {
       width: 100%;
+      max-width: 200px;
       border-radius: 8px;
+      margin-bottom: 10px;
     }
 
     .item h3 {
       margin: 10px 0 5px;
     }
 
+    .item p {
+      font-size: 0.9rem;
+      color: #eee;
+      font-weight: normal;
+    }
+
+    .price {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffd700;
+      margin: 5px 0 10px;
+    }
+
     .counter {
+      margin-top: auto;
+      margin-bottom: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-top: 10px;
       gap: 10px;
+      font-weight: 700;
     }
 
     .counter button {
       background: #ffd700;
-      color: black;
-      font-weight: bold;
       border: none;
+      color: #222;
+      font-size: 1rem;
+      padding: 5px 12px;
       border-radius: 5px;
-      width: 30px;
-      height: 30px;
       cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .counter button:hover {
+      background: #fff100;
+    }
+
+    .counter span {
+      font-size: 1.2rem;
+      min-width: 25px;
+      text-align: center;
+      display: inline-block;
+      user-select: none;
     }
 
     .cart-icon {
       position: fixed;
       top: 20px;
       right: 20px;
-      background: #ffd700;
-      border-radius: 50%;
-      padding: 15px;
+      font-size: 2.5rem;
+      color: #ffd700;
       cursor: pointer;
-      z-index: 1000;
+      z-index: 1100;
+      user-select: none;
     }
 
-    .cart-icon span {
+    .cart-badge {
       position: absolute;
-      top: 5px;
-      right: 5px;
+      top: -8px;
+      right: -8px;
       background: red;
       color: white;
-      font-size: 12px;
-      padding: 3px 6px;
+      font-weight: 700;
       border-radius: 50%;
+      padding: 2px 7px;
+      font-size: 0.8rem;
       display: none;
     }
 
     .cart-sidebar {
       position: fixed;
       top: 0;
-      right: -100%;
-      width: 300px;
-      height: 100%;
-      background: #1a1a1a;
-      transition: right 0.3s ease;
+      right: -350px;
+      width: 350px;
+      height: 100vh;
+      background: rgba(0,0,0,0.95);
+      color: white;
+      box-shadow: -3px 0 10px rgba(0,0,0,0.7);
       padding: 20px;
-      z-index: 999;
+      box-sizing: border-box;
+      transition: right 0.4s ease;
+      z-index: 1050;
       overflow-y: auto;
+      display: flex;
+      flex-direction: column;
     }
 
     .cart-sidebar.open {
@@ -101,203 +193,259 @@
 
     .cart-sidebar h2 {
       margin-top: 0;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #ffd700;
+      padding-bottom: 8px;
     }
 
     .cart-item {
       display: flex;
-      gap: 10px;
+      gap: 15px;
       margin-bottom: 15px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 10px;
+      align-items: center;
     }
 
     .cart-item img {
-      width: 50px;
-      height: 50px;
+      width: 60px;
+      height: 60px;
       object-fit: cover;
-      border-radius: 5px;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.5);
     }
 
     .cart-item-details {
-      display: flex;
-      flex-direction: column;
-      font-size: 0.9rem;
+      flex-grow: 1;
     }
 
-    #cartCloseBtn {
+    .cart-item-details h4 {
+      margin: 0 0 5px;
+      font-size: 1rem;
+    }
+
+    .cart-item-details span {
+      font-size: 0.9rem;
+      color: #ccc;
+      display: block;
+    }
+
+    .cart-item-quantity {
+      font-weight: 700;
+      font-size: 1.1rem;
+      user-select: none;
+    }
+
+    .cart-close {
       background: none;
-      color: white;
       border: none;
-      font-size: 1.2rem;
-      position: absolute;
-      top: 10px;
-      right: 15px;
+      color: #ffd700;
+      font-size: 1.8rem;
       cursor: pointer;
+      align-self: flex-end;
+      margin-bottom: 15px;
+      transition: color 0.2s;
+    }
+
+    .cart-close:hover {
+      color: #fff;
+    }
+
+    .total-section {
+      border-top: 1px solid #ffd700;
+      padding-top: 10px;
+      margin-top: auto;
+    }
+
+    .total-section h3 {
+      margin: 10px 0 5px;
+      font-size: 1.2rem;
+    }
+
+    .checkout-btn {
+      background: #ffd700;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      padding: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 1rem;
+    }
+
+    .checkout-btn:hover {
+      background: #fff100;
     }
   </style>
 </head>
 <body>
 
-<div class="cart-icon" id="cartIcon">
-  🛒
-  <span id="cartBadge">0</span>
-</div>
+  <nav>
+    <a href="index.html"><i class="fas fa-house"></i> Home</a>
+    <a href="catalog.html"><i class="fas fa-box-open"></i> Catalog</a>
+    <a href="about.html"><i class="fas fa-info-circle"></i> About</a>
+  </nav>
 
-<div class="cart-sidebar" id="cartSidebar" aria-hidden="true">
-  <button id="cartCloseBtn">✖</button>
-  <h2>Your Cart</h2>
-  <div id="cartItemsContainer"></div>
-</div>
+  <h1>Catalog Page</h1>
+  <p class="description">This is the catalog page for Ventus products. Find the scent that defines you.</p>
 
-<div class="product-container">
-  <div class="item" data-id="1" data-name="Ventus Classic" data-img="https://via.placeholder.com/150" data-price="150000">
-    <img src="https://via.placeholder.com/150" alt="Ventus Classic"/>
-    <h3>Ventus Classic</h3>
-    <p>IDR 150.000</p>
-    <div class="counter">
-      <button onclick="decrease(this)">−</button>
-      <span>0</span>
-      <button onclick="increase(this)">+</button>
+  <div class="catalog-items">
+    <div class="item" data-id="1" data-name="Ventus Fell In Eden" data-price="75000" data-img="https://i.imgur.com/d0TLtWq.jpeg">
+      <img src="https://i.imgur.com/d0TLtWq.jpeg" alt="Ventus Fell In Eden" />
+      <h3>Ventus Fell In Eden</h3>
+      <p>A timeless scent that speaks of power, elegance, and wind.</p>
+      <div class="counter">
+        <button onclick="decrease(this)">-</button>
+        <span>0</span>
+        <button onclick="increase(this)">+</button>
+      </div>
+    </div>
+
+    <div class="item" data-id="2" data-name="Ventus Breathe by Divine" data-price="75000" data-img="https://i.imgur.com/RtSmtYL.jpeg">
+      <img src="https://i.imgur.com/RtSmtYL.jpeg" alt="Ventus Breathe by Divine" />
+      <h3>Ventus Breathe by Divine</h3>
+      <p>Fresh, airy, and soul-touching — for moments that linger.</p>
+      <div class="counter">
+        <button onclick="decrease(this)">-</button>
+        <span>0</span>
+        <button onclick="increase(this)">+</button>
+      </div>
+    </div>
+
+    <div class="item" data-id="3" data-name="Ventus House of Manna" data-price="75000" data-img="https://i.imgur.com/a1VptEV.jpeg">
+      <img src="https://i.imgur.com/a1VptEV.jpeg" alt="Ventus House of Manna" />
+      <h3>Ventus House of Manna</h3>
+      <p>A divine scent that blends warmth and clarity in harmony.</p>
+      <div class="counter">
+        <button onclick="decrease(this)">-</button>
+        <span>0</span>
+        <button onclick="increase(this)">+</button>
+      </div>
     </div>
   </div>
 
-  <div class="item" data-id="2" data-name="Ventus Gold" data-img="https://via.placeholder.com/150/ffd700" data-price="200000">
-    <img src="https://via.placeholder.com/150/ffd700" alt="Ventus Gold"/>
-    <h3>Ventus Gold</h3>
-    <p>IDR 200.000</p>
-    <div class="counter">
-      <button onclick="decrease(this)">−</button>
-      <span>0</span>
-      <button onclick="increase(this)">+</button>
-    </div>
+  <div class="cart-icon" id="cartIcon">
+    <i class="fas fa-shopping-cart"></i>
+    <div class="cart-badge" id="cartBadge">0</div>
   </div>
-</div>
 
-<script>
-  function increase(button) {
-    const span = button.parentElement.querySelector('span');
-    let count = parseInt(span.textContent);
-    count++;
-    span.textContent = count;
-    updateCart(button.closest('.item').dataset.id, button.closest('.item'));
-  }
+  <aside class="cart-sidebar" id="cartSidebar">
+    <button class="cart-close" id="cartCloseBtn">&times;</button>
+    <h2>Your Cart</h2>
+    <div id="cartItemsContainer"><p>Your cart is empty.</p></div>
 
-  function decrease(button) {
-    const span = button.parentElement.querySelector('span');
-    let count = parseInt(span.textContent);
-    if (count > 0) {
-      count--;
+    <div class="total-section">
+      <h3>Total: <span id="cartTotal">IDR 0</span></h3>
+      <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+    </div>
+  </aside>
+
+  <script>
+    const cartIcon = document.getElementById('cartIcon');
+    const cartSidebar = document.getElementById('cartSidebar');
+    const cartCloseBtn = document.getElementById('cartCloseBtn');
+    const cartBadge = document.getElementById('cartBadge');
+    const cartItemsContainer = document.getElementById('cartItemsContainer');
+    const cartTotal = document.getElementById('cartTotal');
+
+    let cartData = {};
+
+    function increase(button) {
+      const itemElement = button.closest('.item');
+      const span = itemElement.querySelector('.counter span');
+      let count = parseInt(span.textContent);
+      count++;
       span.textContent = count;
-      updateCart(button.closest('.item').dataset.id, button.closest('.item'));
-    }
-  }
-
-  const cartIcon = document.getElementById('cartIcon');
-  const cartSidebar = document.getElementById('cartSidebar');
-  const cartCloseBtn = document.getElementById('cartCloseBtn');
-  const cartBadge = document.getElementById('cartBadge');
-  const cartItemsContainer = document.getElementById('cartItemsContainer');
-
-  let cartData = {};
-
-  function updateCart(id, itemElement) {
-    const count = parseInt(itemElement.querySelector('.counter span').textContent);
-
-    if (count > 0) {
-      cartData[id] = {
-        name: itemElement.dataset.name,
-        img: itemElement.dataset.img,
-        quantity: count,
-        price: parseInt(itemElement.dataset.price)
-      };
-    } else {
-      delete cartData[id];
+      updateCart(itemElement.dataset.id, itemElement);
     }
 
-    updateCartBadge();
-    renderCartItems();
-  }
+    function decrease(button) {
+      const itemElement = button.closest('.item');
+      const span = itemElement.querySelector('.counter span');
+      let count = parseInt(span.textContent);
+      if (count > 0) {
+        count--;
+        span.textContent = count;
+        updateCart(itemElement.dataset.id, itemElement);
+      }
+    }
 
-  function updateCartBadge() {
-    const totalCount = Object.values(cartData).reduce((acc, item) => acc + item.quantity, 0);
-    if (totalCount > 0) {
-      cartBadge.style.display = 'inline';
+    function updateCart(id, itemElement) {
+      const count = parseInt(itemElement.querySelector('.counter span').textContent);
+
+      if (count > 0) {
+        cartData[id] = {
+          name: itemElement.dataset.name,
+          img: itemElement.dataset.img,
+          quantity: count,
+          price: parseInt(itemElement.dataset.price)
+        };
+      } else {
+        delete cartData[id];
+      }
+      updateCartBadge();
+      renderCartItems();
+    }
+
+    function updateCartBadge() {
+      const totalCount = Object.values(cartData).reduce((acc, item) => acc + item.quantity, 0);
+      cartBadge.style.display = totalCount > 0 ? 'block' : 'none';
       cartBadge.textContent = totalCount;
-    } else {
-      cartBadge.style.display = 'none';
-    }
-  }
-
-  function formatIDR(num) {
-    return 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  }
-
-  function renderCartItems() {
-    cartItemsContainer.innerHTML = '';
-    const items = Object.values(cartData);
-
-    if (items.length === 0) {
-      cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
-      return;
     }
 
-    let totalPriceAll = 0;
+    function formatIDR(num) {
+      return 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
 
-    items.forEach(item => {
-      const div = document.createElement('div');
-      div.className = 'cart-item';
-      const totalPrice = item.price * item.quantity;
-      totalPriceAll += totalPrice;
+    function renderCartItems() {
+      cartItemsContainer.innerHTML = '';
+      const items = Object.values(cartData);
+      if (items.length === 0) {
+        cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
+        cartTotal.textContent = 'IDR 0';
+        return;
+      }
 
-      div.innerHTML = `
-        <img src="${item.img}" alt="${item.name}" />
-        <div class="cart-item-details">
-          <h4>${item.name}</h4>
-          <span>Quantity: ${item.quantity}</span>
-          <span>Price per item: ${formatIDR(item.price)}</span>
-          <span>Total: ${formatIDR(totalPrice)}</span>
-        </div>
-      `;
-      cartItemsContainer.appendChild(div);
+      let total = 0;
+
+      items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+
+        const totalPrice = item.price * item.quantity;
+        total += totalPrice;
+
+        div.innerHTML = `
+          <img src="${item.img}" alt="${item.name}" />
+          <div class="cart-item-details">
+            <h4>${item.name}</h4>
+            <span>Quantity: ${item.quantity}</span>
+            <span>Price: ${formatIDR(item.price)}</span>
+            <span>Total: ${formatIDR(totalPrice)}</span>
+          </div>
+        `;
+
+        cartItemsContainer.appendChild(div);
+      });
+
+      cartTotal.textContent = formatIDR(total);
+    }
+
+    function toggleCart() {
+      cartSidebar.classList.toggle('open');
+    }
+
+    function checkout() {
+      alert('Thank you for your order! Proceeding to payment...');
+    }
+
+    cartIcon.addEventListener('click', toggleCart);
+    cartCloseBtn.addEventListener('click', toggleCart);
+
+    document.addEventListener('click', (e) => {
+      if (!cartSidebar.contains(e.target) && !cartIcon.contains(e.target) && cartSidebar.classList.contains('open')) {
+        toggleCart();
+      }
     });
-
-    const summary = document.createElement('div');
-    summary.style.marginTop = '20px';
-    summary.innerHTML = `
-      <hr style="margin: 15px 0; border: 1px solid #444;" />
-      <p style="font-size: 1.1rem;"><strong>Total: ${formatIDR(totalPriceAll)}</strong></p>
-      <button onclick="checkout()" style="padding: 10px 20px; background: #ffd700; color: black; font-weight: bold; border: none; border-radius: 5px; cursor: pointer;">Proceed to Checkout</button>
-    `;
-    cartItemsContainer.appendChild(summary);
-  }
-
-  function checkout() {
-    alert("Thank you for your order! This is a demo checkout.");
-  }
-
-  function toggleCart() {
-    const isOpen = cartSidebar.classList.contains('open');
-    if (isOpen) {
-      cartSidebar.classList.remove('open');
-      cartSidebar.setAttribute('aria-hidden', 'true');
-    } else {
-      cartSidebar.classList.add('open');
-      cartSidebar.setAttribute('aria-hidden', 'false');
-    }
-  }
-
-  cartIcon.addEventListener('click', toggleCart);
-  cartCloseBtn.addEventListener('click', toggleCart);
-
-  document.addEventListener('click', (e) => {
-    if (
-      !cartSidebar.contains(e.target) &&
-      !cartIcon.contains(e.target) &&
-      cartSidebar.classList.contains('open')
-    ) {
-      toggleCart();
-    }
-  });
-</script>
+  </script>
 </body>
 </html>
