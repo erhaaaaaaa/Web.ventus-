@@ -2,15 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- FontAwesome CDN -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Checkout - Ventus</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-  <title>Checkout - Ventus Catalog</title>
-
   <style>
+    /* Salin semua style dari kode katalogmu di sini (body, nav, catalog, cart, dll) */
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -23,256 +19,44 @@
       display: flex;
       flex-direction: column;
     }
+    /* ... (style lainnya sama persis) ... */
 
-    nav {
-      background: rgba(0, 0, 0, 0.6);
-      padding: 15px 30px;
-      display: flex;
-      gap: 30px;
-      align-items: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-    }
-
-    nav a {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 1.1rem;
-      transition: color 0.3s ease;
-    }
-
-    nav a:hover {
-      color: #ffd700;
-    }
-
-    h1 {
-      margin: 40px 30px 20px;
-      font-size: 2.8rem;
-      text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
-    }
-
-    p.description {
-      margin: 0 30px 40px;
-      font-size: 1.2rem;
-      max-width: 600px;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
-    }
-
-    .catalog-items {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 25px;
-      padding: 0 30px 50px;
-      flex-grow: 1;
-    }
-
-    .item {
-      background: rgba(255, 255, 255, 0.15);
-      padding: 20px;
+    /* Tambah style untuk form checkout */
+    .checkout-form {
+      background: rgba(0,0,0,0.7);
+      padding: 20px 30px;
+      margin: 20px 30px 40px;
       border-radius: 10px;
-      text-align: center;
-      font-weight: 700;
-      font-size: 1.1rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-      transition: background 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .item:hover {
-      background: rgba(255, 215, 0, 0.2);
-      color: #fff;
-    }
-
-    .item img {
-      width: 100%;
-      max-width: 200px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-
-    .item h3 {
-      margin: 10px 0 5px;
-    }
-
-    .item p {
-      font-size: 0.9rem;
-      color: #eee;
-      font-weight: normal;
-    }
-
-    .price {
-      font-size: 1.1rem;
-      font-weight: 700;
+      max-width: 600px;
       color: #ffd700;
-      margin: 5px 0 10px;
     }
-
-    .counter {
-      margin-top: auto;
-      margin-bottom: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      font-weight: 700;
-    }
-
-    .counter button {
-      background: #ffd700;
-      border: none;
-      color: #222;
-      font-size: 1rem;
-      padding: 5px 12px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .counter button:hover {
-      background: #fff100;
-    }
-
-    .counter span {
-      font-size: 1.2rem;
-      min-width: 25px;
-      text-align: center;
-      display: inline-block;
-      user-select: none;
-    }
-
-    .cart-icon {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      font-size: 2.5rem;
-      color: #ffd700;
-      cursor: pointer;
-      z-index: 1100;
-      user-select: none;
-    }
-
-    .cart-badge {
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      background: red;
-      color: white;
-      font-weight: 700;
-      border-radius: 50%;
-      padding: 2px 7px;
-      font-size: 0.8rem;
-      display: none;
-    }
-
-    .cart-sidebar {
-      position: fixed;
-      top: 0;
-      right: -350px;
-      width: 350px;
-      height: 100vh;
-      background: rgba(0,0,0,0.95);
-      color: white;
-      box-shadow: -3px 0 10px rgba(0,0,0,0.7);
-      padding: 20px;
-      box-sizing: border-box;
-      transition: right 0.4s ease;
-      z-index: 1050;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .cart-sidebar.open {
-      right: 0;
-    }
-
-    .cart-sidebar h2 {
-      margin-top: 0;
+    .checkout-form h2 {
       margin-bottom: 15px;
-      border-bottom: 1px solid #ffd700;
-      padding-bottom: 8px;
     }
-
-    .cart-item {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 15px;
-      align-items: center;
-    }
-
-    .cart-item img {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 6px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.5);
-    }
-
-    .cart-item-details {
-      flex-grow: 1;
-    }
-
-    .cart-item-details h4 {
-      margin: 0 0 5px;
-      font-size: 1rem;
-    }
-
-    .cart-item-details span {
-      font-size: 0.9rem;
-      color: #ccc;
+    .checkout-form label {
       display: block;
-    }
-
-    .cart-item-quantity {
-      font-weight: 700;
-      font-size: 1.1rem;
-      user-select: none;
-    }
-
-    .cart-close {
-      background: none;
-      border: none;
-      color: #ffd700;
-      font-size: 1.8rem;
-      cursor: pointer;
-      align-self: flex-end;
-      margin-bottom: 15px;
-      transition: color 0.2s;
-    }
-
-    .cart-close:hover {
-      color: #fff;
-    }
-
-    .total-section {
-      border-top: 1px solid #ffd700;
-      padding-top: 10px;
-      margin-top: auto;
-    }
-
-    .total-section h3 {
-      margin: 10px 0 5px;
-      font-size: 1.2rem;
-    }
-
-    .checkout-btn {
-      background: #ffd700;
-      color: #000;
-      font-weight: bold;
-      border: none;
-      border-radius: 5px;
-      padding: 10px;
-      cursor: pointer;
       margin-top: 10px;
+      font-weight: 700;
+    }
+    .checkout-form input, .checkout-form textarea, .checkout-form select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: none;
       font-size: 1rem;
     }
-
-    .checkout-btn:hover {
+    .checkout-form button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-weight: 700;
+      background: #ffd700;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+    .checkout-form button:hover {
       background: #fff100;
     }
   </style>
@@ -285,10 +69,12 @@
     <a href="about.html"><i class="fas fa-info-circle"></i> About</a>
   </nav>
 
-  <h1>Catalog Page</h1>
-  <p class="description">This is the catalog page for Ventus products. Find the scent that defines you.</p>
+  <h1>Checkout Page</h1>
+  <p class="description">Review your order and enter your details below to complete your purchase.</p>
 
+  <!-- Catalog items -->
   <div class="catalog-items">
+    <!-- Salin semua item katalog di sini seperti yang di kode kamu -->
     <div class="item" data-id="1" data-name="Ventus Fell In Eden" data-price="75000" data-img="https://i.imgur.com/d0TLtWq.jpeg">
       <img src="https://i.imgur.com/d0TLtWq.jpeg" alt="Ventus Fell In Eden" />
       <h3>Ventus Fell In Eden</h3>
@@ -299,50 +85,44 @@
         <button onclick="increase(this)">+</button>
       </div>
     </div>
-
-    <div class="item" data-id="2" data-name="Ventus Breathe by Divine" data-price="75000" data-img="https://i.imgur.com/RtSmtYL.jpeg">
-      <img src="https://i.imgur.com/RtSmtYL.jpeg" alt="Ventus Breathe by Divine" />
-      <h3>Ventus Breathe by Divine</h3>
-      <p>Fresh, airy, and soul-touching — for moments that linger.</p>
-      <div class="counter">
-        <button onclick="decrease(this)">-</button>
-        <span>0</span>
-        <button onclick="increase(this)">+</button>
-      </div>
-    </div>
-
-    <div class="item" data-id="3" data-name="Ventus House of Manna" data-price="75000" data-img="https://i.imgur.com/a1VptEV.jpeg">
-      <img src="https://i.imgur.com/a1VptEV.jpeg" alt="Ventus House of Manna" />
-      <h3>Ventus House of Manna</h3>
-      <p>A divine scent that blends warmth and clarity in harmony.</p>
-      <div class="counter">
-        <button onclick="decrease(this)">-</button>
-        <span>0</span>
-        <button onclick="increase(this)">+</button>
-      </div>
-    </div>
+    <!-- Tambahkan item lainnya juga -->
   </div>
 
-  <div class="cart-icon" id="cartIcon">
-    <i class="fas fa-shopping-cart"></i>
-    <div class="cart-badge" id="cartBadge">0</div>
-  </div>
-
-  <aside class="cart-sidebar" id="cartSidebar">
-    <button class="cart-close" id="cartCloseBtn">&times;</button>
+  <!-- Cart Sidebar -->
+  <aside class="cart-sidebar" id="cartSidebar" style="position: relative; right: 0; width: 100%; max-width: 600px; height: auto; box-shadow: none; background: rgba(0,0,0,0.85); margin: 20px 30px; border-radius: 10px;">
     <h2>Your Cart</h2>
     <div id="cartItemsContainer"><p>Your cart is empty.</p></div>
 
     <div class="total-section">
       <h3>Total: <span id="cartTotal">IDR 0</span></h3>
-      <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
     </div>
   </aside>
 
+  <!-- Checkout form -->
+  <section class="checkout-form">
+    <h2>Enter Your Details</h2>
+    <form id="checkoutForm" onsubmit="return handleCheckout(event)">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="address">Shipping Address</label>
+      <textarea id="address" name="address" rows="3" required></textarea>
+
+      <label for="payment">Payment Method</label>
+      <select id="payment" name="payment" required>
+        <option value="">Select a payment method</option>
+        <option value="credit">Credit Card</option>
+        <option value="transfer">Bank Transfer</option>
+        <option value="cod">Cash on Delivery</option>
+      </select>
+
+      <button type="submit">Complete Purchase</button>
+    </form>
+  </section>
+
   <script>
-    const cartIcon = document.getElementById('cartIcon');
-    const cartSidebar = document.getElementById('cartSidebar');
-    const cartCloseBtn = document.getElementById('cartCloseBtn');
+    // Salin semua JS dari kode katalog kamu di sini (increase, decrease, updateCart, dll)
+
     const cartBadge = document.getElementById('cartBadge');
     const cartItemsContainer = document.getElementById('cartItemsContainer');
     const cartTotal = document.getElementById('cartTotal');
@@ -382,14 +162,7 @@
       } else {
         delete cartData[id];
       }
-      updateCartBadge();
       renderCartItems();
-    }
-
-    function updateCartBadge() {
-      const totalCount = Object.values(cartData).reduce((acc, item) => acc + item.quantity, 0);
-      cartBadge.style.display = totalCount > 0 ? 'block' : 'none';
-      cartBadge.textContent = totalCount;
     }
 
     function formatIDR(num) {
@@ -430,35 +203,33 @@
       cartTotal.textContent = formatIDR(total);
     }
 
-    function toggleCart() {
-      cartSidebar.classList.toggle('open');
-    }
-
-    function checkout() {
+    function handleCheckout(event) {
+      event.preventDefault();
       if (Object.keys(cartData).length === 0) {
-        alert('Your cart is empty. Please add items before checkout.');
-        return;
+        alert('Your cart is empty. Please add some items before checkout.');
+        return false;
       }
-      let message = 'Thank you for your order!\n\nOrder summary:\n';
-      let total = 0;
-      Object.values(cartData).forEach(item => {
-        const itemTotal = item.price * item.quantity;
-        total += itemTotal;
-        message += `${item.name} - Qty: ${item.quantity} - ${formatIDR(itemTotal)}\n`;
-      });
-      message += `\nTotal: ${formatIDR(total)}\n\nProceeding to payment...`;
-      alert(message);
-      // Here you could add further logic, like redirecting or clearing the cart.
+      const name = document.getElementById('name').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const payment = document.getElementById('payment').value;
+
+      if (!name || !address || !payment) {
+        alert('Please fill all required fields.');
+        return false;
+      }
+
+      // Disini bisa tambahkan proses kirim data ke server via fetch/ajax
+
+      alert(`Thank you ${name}! Your order has been placed.\nTotal: ${cartTotal.textContent}`);
+      // Reset cart dan form
+      cartData = {};
+      renderCartItems();
+      const counters = document.querySelectorAll('.counter span');
+      counters.forEach(span => span.textContent = '0');
+      event.target.reset();
+      return false;
     }
-
-    cartIcon.addEventListener('click', toggleCart);
-    cartCloseBtn.addEventListener('click', toggleCart);
-
-    document.addEventListener('click', (e) => {
-      if (!cartSidebar.contains(e.target) && !cartIcon.contains(e.target) && cartSidebar.classList.contains('open')) {
-        toggleCart();
-      }
-    });
   </script>
+
 </body>
 </html>
