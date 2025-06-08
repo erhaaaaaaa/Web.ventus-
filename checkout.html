@@ -50,7 +50,7 @@
       font-weight: 600;
     }
 
-    input, textarea {
+    input, textarea, select {
       width: 100%;
       padding: 12px;
       border: none;
@@ -59,7 +59,7 @@
       font-size: 1rem;
     }
 
-    input:focus, textarea:focus {
+    input:focus, textarea:focus, select:focus {
       outline: 2px solid #ffd700;
     }
 
@@ -99,19 +99,41 @@
     <h2>Complete Your Order</h2>
     <form id="orderForm" onsubmit="return handleSubmit(event)">
       <label for="name">Full Name</label>
-      <input type="text" id="name" name="name" required placeholder />
+      <input type="text" id="name" name="name" required placeholder="Enter your full name" />
 
       <label for="email">Email Address</label>
-      <input type="email" id="email" name="email" required placeholder />
+      <input type="email" id="email" name="email" required placeholder="your@example.com" />
 
       <label for="phone">Phone Number</label>
-      <input type="tel" id="phone" name="phone" required pattern />
+      <input type="tel" id="phone" name="phone" required pattern="[0-9+ ]+" placeholder="+62 812 3456 7890" />
 
-       <label for="address">Shipping Address</label>
-      <textarea id="address" name="address" rows="3" required placeholder></textarea>
+      <label for="province">Province</label>
+      <select id="province" name="province" required onchange="updateCities()">
+        <option value="">Select Province</option>
+        <option value="Jakarta">Jakarta</option>
+        <option value="West Java">West Java</option>
+      </select>
+
+      <label for="city">City / Regency</label>
+      <select id="city" name="city" required onchange="updateDistricts()">
+        <option value="">Select City/Regency</option>
+      </select>
+
+      <label for="district">District</label>
+      <select id="district" name="district" required onchange="updatePostalCode()">
+        <option value="">Select District</option>
+      </select>
+
+      <label for="postal">Postal Code</label>
+      <select id="postal" name="postal" required>
+        <option value="">Select Postal Code</option>
+      </select>
+
+      <label for="address">Street Address</label>
+      <textarea id="address" name="address" rows="3" required placeholder="Street name, building, block, etc."></textarea>
 
       <label for="notes">Order Notes</label>
-      <textarea id="notes" name="notes" rows="3" placeholder></textarea>
+      <textarea id="notes" name="notes" rows="3" placeholder="Any additional instructions?"></textarea>
 
       <button type="submit" class="btn-submit">Submit Order</button>
     </form>
@@ -122,28 +144,100 @@
   </footer>
 
   <script>
+    const data = {
+      "Jakarta": {
+        "Central Jakarta": {
+          "Menteng": "10310",
+          "Gambir": "10110"
+        },
+        "South Jakarta": {
+          "Kebayoran Baru": "12120",
+          "Tebet": "12810"
+        }
+      },
+      "West Java": {
+        "Bandung": {
+          "Coblong": "40132",
+          "Lengkong": "40263"
+        },
+        "Bekasi": {
+          "Bekasi Timur": "17111",
+          "Bekasi Barat": "17135"
+        }
+      }
+    };
+
+    function updateCities() {
+      const province = document.getElementById("province").value;
+      const citySelect = document.getElementById("city");
+      citySelect.innerHTML = `<option value="">Select City/Regency</option>`;
+
+      if (province && data[province]) {
+        Object.keys(data[province]).forEach(city => {
+          const option = document.createElement("option");
+          option.value = city;
+          option.textContent = city;
+          citySelect.appendChild(option);
+        });
+      }
+
+      // Reset lower levels
+      document.getElementById("district").innerHTML = `<option value="">Select District</option>`;
+      document.getElementById("postal").innerHTML = `<option value="">Select Postal Code</option>`;
+    }
+
+    function updateDistricts() {
+      const province = document.getElementById("province").value;
+      const city = document.getElementById("city").value;
+      const districtSelect = document.getElementById("district");
+      districtSelect.innerHTML = `<option value="">Select District</option>`;
+
+      if (province && city && data[province] && data[province][city]) {
+        Object.keys(data[province][city]).forEach(district => {
+          const option = document.createElement("option");
+          option.value = district;
+          option.textContent = district;
+          districtSelect.appendChild(option);
+        });
+      }
+
+      document.getElementById("postal").innerHTML = `<option value="">Select Postal Code</option>`;
+    }
+
+    function updatePostalCode() {
+      const province = document.getElementById("province").value;
+      const city = document.getElementById("city").value;
+      const district = document.getElementById("district").value;
+      const postalSelect = document.getElementById("postal");
+      postalSelect.innerHTML = `<option value="">Select Postal Code</option>`;
+
+      if (province && city && district && data[province][city][district]) {
+        const option = document.createElement("option");
+        option.value = data[province][city][district];
+        option.textContent = data[province][city][district];
+        postalSelect.appendChild(option);
+      }
+    }
+
     function handleSubmit(event) {
       event.preventDefault();
 
       const form = document.getElementById("orderForm");
-      const data = new FormData(form);
-
-      const name = data.get("name");
-      const address = data.get("address");
-      const email = data.get("email");
-      const phone = data.get("phone");
-      const notes = data.get("notes");
+      const dataForm = new FormData(form);
 
       const summary = `
-Full Name: ${name}
-Address: ${address}
-Email: ${email}
-Phone: ${phone}
-Notes: ${notes || "None"}
+Full Name: ${dataForm.get("name")}
+Email: ${dataForm.get("email")}
+Phone: ${dataForm.get("phone")}
+Province: ${dataForm.get("province")}
+City: ${dataForm.get("city")}
+District: ${dataForm.get("district")}
+Postal Code: ${dataForm.get("postal")}
+Street Address: ${dataForm.get("address")}
+Notes: ${dataForm.get("notes") || "None"}
       `;
 
       alert("Your order has been successfully submitted!\n\n" + summary);
-
       form.reset();
     }
   </script>
