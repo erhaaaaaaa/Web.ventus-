@@ -1,212 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Order Details - Ventus</title>
+  <meta charset="UTF-8">
+  <title>Checkout - Ventus</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Leaflet & Geocoder -->
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
   <style>
     body {
+      font-family: Arial, sans-serif;
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-image: url('https://i.imgur.com/w2Ihyed.jpeg');
-      background-size: cover;
-      background-position: center;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    header {
-      background: rgba(0, 0, 0, 0.25);
       padding: 20px;
-      text-align: center;
-      font-size: 2rem;
-      font-weight: bold;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      background: #f5f5f5;
     }
 
-    .container {
-      flex: 1;
-      padding: 30px;
-      max-width: 700px;
-      margin: 0 auto;
-      background: rgba(0, 0, 0, 0.65);
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-      margin-top: 40px;
+    h1 {
+      text-align: center;
+      color: #333;
     }
 
-    h2 {
-      text-align: center;
-      margin-bottom: 30px;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+    form {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
     label {
       display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
+      margin-top: 15px;
+      font-weight: bold;
     }
 
     input, textarea {
       width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 6px;
-      margin-bottom: 20px;
-      font-size: 1rem;
-    }
-
-    input:focus, textarea:focus {
-      outline: 2px solid #ffd700;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
     }
 
     #map {
-      height: 350px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-    }
-
-    .btn-submit {
-      width: 100%;
-      background: #ffd700;
-      color: black;
-      font-weight: bold;
-      padding: 14px;
-      border: none;
+      height: 300px;
+      margin-top: 20px;
       border-radius: 8px;
-      font-size: 1.1rem;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px;
+      width: 100%;
+      background: #222;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 5px;
       cursor: pointer;
-      transition: background 0.3s;
     }
 
-    .btn-submit:hover {
-      background: #fff34d;
-    }
-
-    footer {
-      text-align: center;
-      padding: 15px;
-      background: rgba(0,0,0,0.6);
-      font-size: 0.9rem;
-      margin-top: auto;
+    button:hover {
+      background: #444;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    Order Details
-  </header>
+  <h1>Checkout</h1>
 
-  <div class="container">
-    <h2>Complete Your Order</h2>
-    <form id="orderForm" onsubmit="return handleSubmit(event)">
-      <label for="name">Full Name</label>
-      <input type="text" id="name" name="name" required placeholder />
+  <form id="checkoutForm">
+    <label for="name">Nama Lengkap</label>
+    <input type="text" id="name" name="name" required>
 
-      <label for="email">Email Address</label>
-      <input type="email" id="email" name="email" required placeholder />
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required>
 
-      <label for="phone">Phone Number</label>
-      <input type="tel" id="phone" name="phone" required pattern="[0-9+ ]+" placeholder />
+    <label for="phone">No. Telepon</label>
+    <input type="tel" id="phone" name="phone" required>
 
-      <label for="address">Street Address</label>
-      <textarea id="address" name="address" rows="3" required placeholder ></textarea>
+    <label for="address">Alamat Lengkap</label>
+    <textarea id="address" name="address" required></textarea>
 
-      <div id="map"></div>
+    <div id="map"></div>
 
-      <label for="province">Province</label>
-      <input type="text" id="province" name="province" readonly />
+    <label for="province">Provinsi</label>
+    <input type="text" id="province" name="province" readonly>
 
-      <label for="city">City / Regency</label>
-      <input type="text" id="city" name="city" readonly />
+    <label for="city">Kota/Kabupaten</label>
+    <input type="text" id="city" name="city" readonly>
 
-      <label for="district">District</label>
-      <input type="text" id="district" name="district" readonly />
+    <label for="district">Kecamatan</label>
+    <input type="text" id="district" name="district" readonly>
 
-      <label for="postal">Postal Code</label>
-      <input type="text" id="postal" name="postal" readonly />
+    <label for="postal">Kode Pos</label>
+    <input type="text" id="postal" name="postal" readonly>
 
-      <label for="notes">Special Notes</label>
-      <textarea id="notes" name="notes" rows="3" placeholder="Any additional instructions?"></textarea>
+    <button type="submit">Kirim Pesanan</button>
+  </form>
 
-      <button type="submit" class="btn-submit">Submit Order</button>
-    </form>
-  </div>
-
-  <footer>
-    &copy; 2025 Ventus. All rights reserved.
-  </footer>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
-    let map = L.map('map').setView([-7.4295, 109.2467], 13);
-    let marker = L.marker([-7.4295, 109.2467], { draggable: true }).addTo(map);
+    const defaultLatLng = [-6.588553, 106.787109]; // Cimanggu, Bogor
+
+    const map = L.map('map').setView(defaultLatLng, 15);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    L.Control.geocoder({
-      defaultMarkGeocode: false
-    })
-    .on('markgeocode', function(e) {
-      const latlng = e.geocode.center;
-      map.setView(latlng, 16);
-      marker.setLatLng(latlng);
-      reverseGeocode(latlng.lat, latlng.lng);
-    })
-    .addTo(map);
+    const marker = L.marker(defaultLatLng, { draggable: true }).addTo(map);
 
-    marker.on('dragend', function(e) {
+    function reverseGeocode(lat, lon) {
+      const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('address').value = data.display_name || '';
+          const address = data.address || {};
+          document.getElementById('province').value = address.state || '';
+          document.getElementById('city').value = address.city || address.town || address.county || '';
+          document.getElementById('district').value = address.suburb || address.village || address.hamlet || '';
+          document.getElementById('postal').value = address.postcode || '';
+        })
+        .catch(error => {
+          console.error('Reverse geocoding error:', error);
+        });
+    }
+
+    marker.on('dragend', function (e) {
       const latlng = marker.getLatLng();
       reverseGeocode(latlng.lat, latlng.lng);
     });
 
-    function reverseGeocode(lat, lng) {
-      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
-        .then(res => res.json())
-        .then(data => {
-          const addr = data.address;
-          document.getElementById('province').value = addr.state || '';
-          document.getElementById('city').value = addr.city || addr.county || '';
-          document.getElementById('district').value = addr.suburb || addr.village || addr.town || '';
-          document.getElementById('postal').value = addr.postcode || '';
-        })
-        .catch(err => {
-          console.error('Reverse geocoding failed:', err);
-        });
-    }
+    // Inisialisasi langsung saat load
+    reverseGeocode(defaultLatLng[0], defaultLatLng[1]);
 
-    // URL Web App Google Apps Script kamu
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw3PGwC8v_nnyYfhO7PLhv7GXfD9w-c42jkMazl_2RhiTAaKIx9HnQ1K4eISnSVxJgo/exec';
-
-    function handleSubmit(event) {
-      event.preventDefault();
-      const form = document.getElementById("orderForm");
-      const data = new FormData(form);
-
-      // Kirim data ke Google Sheets via Web App
-      fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',  // biar gak kena CORS error, tapi gak bisa cek respon
-        body: data
-      }).then(() => {
-        alert('Your order has been submitted successfully! Thank you.');
-        form.reset();
-      }).catch((error) => {
-        alert('Oops! Something went wrong when submitting your order.');
-        console.error(error);
-      });
-    }
+    // Simpan data checkout saat submit
+    document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Pesanan Anda telah dikirim!');
+    });
   </script>
 
 </body>
