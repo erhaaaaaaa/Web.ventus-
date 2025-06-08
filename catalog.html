@@ -437,6 +437,23 @@
         toggleCart();
       }
     });
+  <!-- Total & Checkout -->
+  <div id="cartTotalContainer" style="margin-top: auto; border-top: 1px solid #ffd700; padding-top: 15px;">
+  <h3 style="margin-bottom: 10px;">Total: <span id="cartTotalAmount">IDR 0</span></h3>
+  <button style="
+    width: 100%;
+    padding: 12px;
+    background: #ffd700;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s;
+    " onclick="checkout()">Proceed to Checkout</button>
+</div>
+
   </script>
 
 </body>
