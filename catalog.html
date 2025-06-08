@@ -13,7 +13,7 @@
     referrerpolicy="no-referrer"
   />
   
-  <title>Catalog</title>
+  <title>Catalog with Cart</title>
 
   <style>
     body {
@@ -36,6 +36,8 @@
       gap: 30px;
       align-items: center;
       box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+      position: relative;
+      z-index: 10;
     }
 
     nav a {
@@ -82,6 +84,7 @@
       font-size: 1.1rem;
       box-shadow: 0 2px 8px rgba(0,0,0,0.4);
       transition: background 0.3s ease;
+      position: relative;
     }
 
     .item:hover {
@@ -120,6 +123,7 @@
       border-radius: 5px;
       cursor: pointer;
       transition: 0.2s;
+      user-select: none;
     }
 
     .counter button:hover {
@@ -130,6 +134,135 @@
       font-size: 1rem;
       min-width: 20px;
       display: inline-block;
+      user-select: none;
+    }
+
+    /* Cart Icon top right */
+    .cart-icon {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 2.5rem;
+      color: #ffd700;
+      cursor: pointer;
+      z-index: 20;
+      user-select: none;
+    }
+
+    /* Cart badge */
+    .cart-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: red;
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    /* Cart panel slide-in */
+    .cart-panel {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 320px;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.9);
+      box-shadow: -3px 0 10px rgba(0,0,0,0.7);
+      padding: 20px;
+      color: white;
+      overflow-y: auto;
+      transition: right 0.3s ease;
+      z-index: 19;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cart-panel.open {
+      right: 0;
+    }
+
+    .cart-panel h2 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-weight: 700;
+      border-bottom: 2px solid #ffd700;
+      padding-bottom: 5px;
+      color: #ffd700;
+    }
+
+    .cart-items {
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 10px;
+    }
+
+    .cart-item img {
+      width: 50px;
+      height: 50px;
+      border-radius: 5px;
+      object-fit: cover;
+      margin-right: 15px;
+    }
+
+    .cart-item-info {
+      flex-grow: 1;
+    }
+
+    .cart-item-info h4 {
+      margin: 0 0 5px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #ffd700;
+    }
+
+    .cart-item-info p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: #ddd;
+    }
+
+    .cart-item-qty {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cart-item-qty button {
+      background: #ffd700;
+      border: none;
+      color: #222;
+      font-size: 1rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      user-select: none;
+      transition: 0.2s;
+    }
+
+    .cart-item-qty button:hover {
+      background: #fff100;
+    }
+
+    .empty-cart {
+      text-align: center;
+      margin-top: 50px;
+      color: #aaa;
+      font-style: italic;
     }
   </style>
 </head>
@@ -144,7 +277,7 @@
   <p>Ini adalah halaman katalog produk Ventus. Temukan aroma yang menggambarkan dirimu.</p>
 
   <div class="catalog-items">
-    <div class="item">
+    <div class="item" data-id="1" data-name="Ventus Fell In Eden" data-desc="A timeless scent that speaks of power, elegance, and wind." data-img="https://i.imgur.com/d0TLtWq.jpeg">
       <img src="https://i.imgur.com/d0TLtWq.jpeg" alt="Ventus Fell In Eden" />
       <h3>Ventus Fell In Eden</h3>
       <p>A timeless scent that speaks of power, elegance, and wind.</p>
@@ -155,7 +288,7 @@
       </div>
     </div>
 
-    <div class="item">
+    <div class="item" data-id="2" data-name="Ventus Breathe by Divine" data-desc="Fresh, airy, and soul-touching — for moments that linger." data-img="https://i.imgur.com/RtSmtYL.jpeg">
       <img src="https://i.imgur.com/RtSmtYL.jpeg" alt="Ventus Breathe by Divine" />
       <h3>Ventus Breathe by Divine</h3>
       <p>Fresh, airy, and soul-touching — for moments that linger.</p>
@@ -166,7 +299,7 @@
       </div>
     </div>
 
-    <div class="item">
+    <div class="item" data-id="3" data-name="Ventus House of Manna" data-desc="A divine scent that blends warmth and clarity in harmony." data-img="https://i.imgur.com/a1VptEV.jpeg">
       <img src="https://i.imgur.com/a1VptEV.jpeg" alt="Ventus House of Manna" />
       <h3>Ventus House of Manna</h3>
       <p>A divine scent that blends warmth and clarity in harmony.</p>
@@ -178,17 +311,92 @@
     </div>
   </div>
 
+  <!-- Cart icon -->
+  <div class="cart-icon" id="cart-icon" title="Show/Hide Cart">
+    <i class="fas fa-shopping-cart"></i>
+    <div class="cart-badge" id="cart-badge" style="display:none">0</div>
+  </div>
+
+  <!-- Cart panel -->
+  <div class="cart-panel" id="cart-panel">
+    <h2>Your Cart</h2>
+    <div class="cart-items" id="cart-items">
+      <p class="empty-cart">Your cart is empty.</p>
+    </div>
+  </div>
+
   <script>
-    function increase(button) {
-      const span = button.parentElement.querySelector('span');
-      span.textContent = parseInt(span.textContent) + 1;
+    const cartIcon = document.getElementById('cart-icon');
+    const cartPanel = document.getElementById('cart-panel');
+    const cartBadge = document.getElementById('cart-badge');
+    const cartItemsContainer = document.getElementById('cart-items');
+
+    // Cart data structure {id: {id, name, desc, img, qty}}
+    const cart = {};
+
+    function updateCartBadge() {
+      const totalQty = Object.values(cart).reduce((sum, item) => sum + item.qty, 0);
+      if (totalQty > 0) {
+        cartBadge.style.display = 'flex';
+        cartBadge.textContent = totalQty;
+      } else {
+        cartBadge.style.display = 'none';
+      }
     }
 
-    function decrease(button) {
-      const span = button.parentElement.querySelector('span');
-      const current = parseInt(span.textContent);
-      if (current > 0) span.textContent = current - 1;
+    function renderCartItems() {
+      cartItemsContainer.innerHTML = '';
+      const items = Object.values(cart);
+      if (items.length === 0) {
+        cartItemsContainer.innerHTML = '<p class="empty-cart">Your cart is empty.</p>';
+        return;
+      }
+
+      items.forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'cart-item';
+
+        itemDiv.innerHTML = `
+          <img src="${item.img}" alt="${item.name}">
+          <div class="cart-item-info">
+            <h4>${item.name}</h4>
+            <p>${item.desc}</p>
+          </div>
+          <div class="cart-item-qty">
+            <button onclick="changeCartQty(${item.id}, -1)">-</button>
+            <span>${item.qty}</span>
+            <button onclick="changeCartQty(${item.id}, 1)">+</button>
+          </div>
+        `;
+        cartItemsContainer.appendChild(itemDiv);
+      });
     }
-  </script>
-</body>
-</html>
+
+    function changeCartQty(id, delta) {
+      if (!cart[id]) return;
+      cart[id].qty += delta;
+      if (cart[id].qty <= 0) {
+        delete cart[id];
+      }
+      syncQtyWithCatalog(id);
+      updateCartBadge();
+      renderCartItems();
+    }
+
+    // Sync quantity span in catalog items to cart data
+    function syncQtyWithCatalog(id) {
+      const catalogItem = document.querySelector(`.item[data-id="${id}"]`);
+      if (!catalogItem) return;
+      const span = catalogItem.querySelector('.counter span');
+      span.textContent = cart[id] ? cart[id].qty : 0;
+    }
+
+    function increase(button) {
+      const itemDiv = button.closest('.item');
+      const id = parseInt(itemDiv.dataset.id);
+      const name = itemDiv.dataset.name;
+      const desc = itemDiv.dataset.desc;
+      const img = itemDiv.dataset.img;
+      const span = button.parentElement.querySelector('span');
+      let qty = parseInt(span.textContent) + 1;
+      span.textContent = qty
