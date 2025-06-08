@@ -8,7 +8,6 @@
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    integrity="sha512-pVjT1BXV+NQmPqV6BB9ZtKxy0zR1R8iJsv2fK35Wb8/+8OXVNhTxR+11qpo6yZzLPB+gRU7IwT3UQhv+7+1ZHg=="
     crossorigin="anonymous"
     referrerpolicy="no-referrer"
   />
@@ -145,7 +144,7 @@
       font-size: 2.5rem;
       color: #ffd700;
       cursor: pointer;
-      z-index: 20;
+      z-index: 1000;
       user-select: none;
     }
 
@@ -174,13 +173,13 @@
       right: -320px;
       width: 320px;
       height: 100vh;
-      background: rgba(0, 0, 0, 0.9);
+      background: rgba(0, 0, 0, 0.95);
       box-shadow: -3px 0 10px rgba(0,0,0,0.7);
       padding: 20px;
       color: white;
       overflow-y: auto;
       transition: right 0.3s ease;
-      z-index: 19;
+      z-index: 999;
       display: flex;
       flex-direction: column;
     }
@@ -299,8 +298,8 @@
       </div>
     </div>
 
-    <div class="item" data-id="3" data-name="Ventus House of Manna" data-desc="A divine scent that blends warmth and clarity in harmony." data-img="https://i.imgur.com/a1VptEV.jpeg">
-      <img src="https://i.imgur.com/a1VptEV.jpeg" alt="Ventus House of Manna" />
+    <div class="item" data-id="3" data-name="Ventus House of Manna" data-desc="A divine scent that blends warmth and clarity in harmony." data-img="https://i.imgur.com/6bURro3.jpeg">
+      <img src="https://i.imgur.com/6bURro3.jpeg" alt="Ventus House of Manna" />
       <h3>Ventus House of Manna</h3>
       <p>A divine scent that blends warmth and clarity in harmony.</p>
       <div class="counter">
@@ -311,92 +310,160 @@
     </div>
   </div>
 
-  <!-- Cart icon -->
-  <div class="cart-icon" id="cart-icon" title="Show/Hide Cart">
+  <!-- Cart Icon -->
+  <div class="cart-icon" id="cartIcon" title="Open Cart">
     <i class="fas fa-shopping-cart"></i>
-    <div class="cart-badge" id="cart-badge" style="display:none">0</div>
+    <div class="cart-badge" id="cartBadge" style="display:none;">0</div>
   </div>
 
-  <!-- Cart panel -->
-  <div class="cart-panel" id="cart-panel">
+  <!-- Cart Panel -->
+  <div class="cart-panel" id="cartPanel">
     <h2>Your Cart</h2>
-    <div class="cart-items" id="cart-items">
+    <div class="cart-items" id="cartItems">
       <p class="empty-cart">Your cart is empty.</p>
     </div>
   </div>
 
   <script>
-    const cartIcon = document.getElementById('cart-icon');
-    const cartPanel = document.getElementById('cart-panel');
-    const cartBadge = document.getElementById('cart-badge');
-    const cartItemsContainer = document.getElementById('cart-items');
-
-    // Cart data structure {id: {id, name, desc, img, qty}}
+    // Cart data, map from item id to quantity
     const cart = {};
 
+    // Update cart badge count
     function updateCartBadge() {
-      const totalQty = Object.values(cart).reduce((sum, item) => sum + item.qty, 0);
-      if (totalQty > 0) {
-        cartBadge.style.display = 'flex';
-        cartBadge.textContent = totalQty;
+      const badge = document.getElementById('cartBadge');
+      const totalCount = Object.values(cart).reduce((a,b) => a+b, 0);
+      if (totalCount > 0) {
+        badge.style.display = 'flex';
+        badge.textContent = totalCount;
       } else {
-        cartBadge.style.display = 'none';
+        badge.style.display = 'none';
       }
     }
 
-    function renderCartItems() {
-      cartItemsContainer.innerHTML = '';
-      const items = Object.values(cart);
-      if (items.length === 0) {
-        cartItemsContainer.innerHTML = '<p class="empty-cart">Your cart is empty.</p>';
+    // Render the cart panel items
+    function renderCart() {
+      const container = document.getElementById('cartItems');
+      container.innerHTML = '';
+
+      const entries = Object.entries(cart).filter(([id, qty]) => qty > 0);
+      if (entries.length === 0) {
+        container.innerHTML = '<p class="empty-cart">Your cart is empty.</p>';
         return;
       }
 
-      items.forEach(item => {
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'cart-item';
+      for (const [id, qty] of entries) {
+        // find the item info from catalog
+        const itemElem = document.querySelector(`.item[data-id="${id}"]`);
+        if (!itemElem) continue;
 
-        itemDiv.innerHTML = `
-          <img src="${item.img}" alt="${item.name}">
+        const name = itemElem.getAttribute('data-name');
+        const desc = itemElem.getAttribute('data-desc');
+        const img = itemElem.getAttribute('data-img');
+
+        // create cart item element
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+
+        div.innerHTML = `
+          <img src="${img}" alt="${name}" />
           <div class="cart-item-info">
-            <h4>${item.name}</h4>
-            <p>${item.desc}</p>
-          </div>
-          <div class="cart-item-qty">
-            <button onclick="changeCartQty(${item.id}, -1)">-</button>
-            <span>${item.qty}</span>
-            <button onclick="changeCartQty(${item.id}, 1)">+</button>
+            <h4>${name}</h4>
+            <p>${desc}</p>
+            <div class="cart-item-qty">
+              <button onclick="decreaseCart('${id}')">-</button>
+              <span>${qty}</span>
+              <button onclick="increaseCart('${id}')">+</button>
+            </div>
           </div>
         `;
-        cartItemsContainer.appendChild(itemDiv);
-      });
+        container.appendChild(div);
+      }
     }
 
-    function changeCartQty(id, delta) {
+    // Increase catalog counter
+    function increase(button) {
+      const counter = button.parentElement;
+      const span = counter.querySelector('span');
+      let count = parseInt(span.textContent);
+      count++;
+      span.textContent = count;
+
+      // update cart
+      const itemElem = counter.closest('.item');
+      const id = itemElem.getAttribute('data-id');
+      cart[id] = count;
+
+      updateCartBadge();
+      renderCart();
+    }
+
+    // Decrease catalog counter
+    function decrease(button) {
+      const counter = button.parentElement;
+      const span = counter.querySelector('span');
+      let count = parseInt(span.textContent);
+      if (count > 0) count--;
+      span.textContent = count;
+
+      // update cart
+      const itemElem = counter.closest('.item');
+      const id = itemElem.getAttribute('data-id');
+      if (count === 0) {
+        delete cart[id];
+      } else {
+        cart[id] = count;
+      }
+
+      updateCartBadge();
+      renderCart();
+    }
+
+    // Increase cart item qty from cart panel buttons
+    function increaseCart(id) {
+      cart[id] = (cart[id] || 0) + 1;
+      updateCartBadge();
+      renderCart();
+
+      // update catalog counter too
+      const itemElem = document.querySelector(`.item[data-id="${id}"]`);
+      if (itemElem) {
+        const span = itemElem.querySelector('.counter span');
+        span.textContent = cart[id];
+      }
+    }
+
+    // Decrease cart item qty from cart panel buttons
+    function decreaseCart(id) {
       if (!cart[id]) return;
-      cart[id].qty += delta;
-      if (cart[id].qty <= 0) {
+      cart[id]--;
+      if (cart[id] <= 0) {
         delete cart[id];
       }
-      syncQtyWithCatalog(id);
       updateCartBadge();
-      renderCartItems();
+      renderCart();
+
+      // update catalog counter too
+      const itemElem = document.querySelector(`.item[data-id="${id}"]`);
+      if (itemElem) {
+        const span = itemElem.querySelector('.counter span');
+        span.textContent = cart[id] || 0;
+      }
     }
 
-    // Sync quantity span in catalog items to cart data
-    function syncQtyWithCatalog(id) {
-      const catalogItem = document.querySelector(`.item[data-id="${id}"]`);
-      if (!catalogItem) return;
-      const span = catalogItem.querySelector('.counter span');
-      span.textContent = cart[id] ? cart[id].qty : 0;
-    }
+    // Toggle cart panel
+    const cartIcon = document.getElementById('cartIcon');
+    const cartPanel = document.getElementById('cartPanel');
 
-    function increase(button) {
-      const itemDiv = button.closest('.item');
-      const id = parseInt(itemDiv.dataset.id);
-      const name = itemDiv.dataset.name;
-      const desc = itemDiv.dataset.desc;
-      const img = itemDiv.dataset.img;
-      const span = button.parentElement.querySelector('span');
-      let qty = parseInt(span.textContent) + 1;
-      span.textContent = qty
+    cartIcon.addEventListener('click', () => {
+      cartPanel.classList.toggle('open');
+    });
+
+    // Clicking outside cart panel closes it
+    document.addEventListener('click', (e) => {
+      if (!cartPanel.contains(e.target) && !cartIcon.contains(e.target)) {
+        cartPanel.classList.remove('open');
+      }
+    });
+  </script>
+</body>
+</html>
