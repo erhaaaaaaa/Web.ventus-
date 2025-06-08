@@ -5,113 +5,137 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Order Details - Ventus</title>
   <style>
-    /* [Gunakan styling dari form sebelumnya: body, container, btn-submit, dsb.] */
+    /* (Gunakan styling gold ❖ hitam dari versi sebelumnya) */
+    body { margin:0; font-family:'Segoe UI',Tahoma; background:url('https://i.imgur.com/w2Ihyed.jpeg') center/cover; color:white; display:flex; flex-direction:column; min-height:100vh; }
+    header { background:rgba(0,0,0,0.6); padding:20px; text-align:center; font-size:2rem; font-weight:bold; box-shadow:0 2px 6px rgba(0,0,0,0.5); }
+    .container { flex:1; padding:30px; max-width:600px; margin:40px auto; background:rgba(0,0,0,0.65); border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.6); }
+    h2 { text-align:center; margin-bottom:30px; text-shadow:1px 1px 3px rgba(0,0,0,0.6); }
+    label { display:block; margin-bottom:8px; font-weight:600; }
+    input, textarea, select { width:100%; padding:12px; border:none; border-radius:6px; margin-bottom:20px; font-size:1rem; }
+    input:focus, textarea:focus, select:focus { outline:2px solid #ffd700; }
+    .btn-submit { width:100%; background:#ffd700; color:#000; font-weight:bold; padding:14px; border:none; border-radius:8px; font-size:1.1rem; cursor:pointer; transition:background 0.3s; }
+    .btn-submit:hover { background:#fff34d; }
+    footer { text-align:center; padding:15px; background:rgba(0,0,0,0.6); font-size:0.9rem; margin-top:auto; }
   </style>
 </head>
 <body>
+  <header>Order Details</header>
+  <div class="container">
+    <h2>Complete Your Order</h2>
+    <form id="orderForm" onsubmit="return handleSubmit(event)">
+      <!-- Buyer Info -->
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" required placeholder="Enter your full name" />
 
-<header>Order Details</header>
-<div class="container">
-  <h2>Complete Your Order</h2>
-  <form id="orderForm" onsubmit="return handleSubmit(event)">
-    <!-- Previous personal fields here... -->
-    <label for="province">Province</label>
-    <select id="province" name="province" required></select>
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" required placeholder="your@example.com" />
 
-    <label for="city">City/Regency</label>
-    <select id="city" name="city" required></select>
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" name="phone" required pattern="[0-9+ ]+" placeholder="+62 812 3456 7890" />
 
-    <label for="district">District (Kecamatan)</label>
-    <select id="district" name="district" required></select>
+      <label for="address">Street Address</label>
+      <textarea id="address" name="address" rows="3" required placeholder="Street name, building, block, etc."></textarea>
 
-    <label for="subdistrict">Subdistrict (Kel./Desa)</label>
-    <select id="subdistrict" name="subdistrict" required></select>
+      <!-- Shipping Location -->
+      <label for="province">Province</label>
+      <select id="province" name="province" required></select>
 
-    <label for="postal">Postal Code</label>
-    <input type="text" id="postal" name="postal" required readonly />
+      <label for="city">City / Regency</label>
+      <select id="city" name="city" required></select>
 
-    <!-- Address, notes, and submit button -->
-  </form>
-</div>
+      <label for="district">District (Kecamatan)</label>
+      <select id="district" name="district" required></select>
 
-<footer>&copy; 2025 Ventus. All rights reserved.</footer>
+      <label for="subdistrict">Subdistrict (Kelurahan/Desa)</label>
+      <select id="subdistrict" name="subdistrict" required></select>
 
-<script>
-  const API = 'https://emsifa.github.io/api-wilayah-indonesia/api';
-  const provinceEl = document.getElementById('province');
-  const cityEl = document.getElementById('city');
-  const districtEl = document.getElementById('district');
-  const subdistrictEl = document.getElementById('subdistrict');
-  const postalEl = document.getElementById('postal');
+      <label for="postal">Postal Code</label>
+      <input type="text" id="postal" name="postal" required readonly />
 
-  // Fetch provinces
-  fetch(`${API}/provinces.json`)
-    .then(r => r.json())
-    .then(data => {
-      provinceEl.innerHTML = '<option value="">Select Province</option>' +
-        data.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
-    });
+      <label for="notes">Order Notes</label>
+      <textarea id="notes" name="notes" rows="3" placeholder="Any additional instructions?"></textarea>
 
-  provinceEl.onchange = () => {
-    const id = provinceEl.value;
-    cityEl.innerHTML = '<option>Loading...</option>';
-    districtEl.innerHTML = '<option>Select City first</option>';
-    subdistrictEl.innerHTML = '<option>Select District first</option>';
-    postalEl.value = '';
-    if (!id) return cityEl.innerHTML = '<option>Select Province first</option>';
-    fetch(`${API}/regencies/${id}.json`)
+      <button type="submit" class="btn-submit">Submit Order</button>
+    </form>
+  </div>
+  <footer>&copy; 2025 Ventus. All rights reserved.</footer>
+
+  <script>
+    const API = 'https://emsifa.github.io/api-wilayah-indonesia/api';
+    const provinceEl = document.getElementById('province');
+    const cityEl = document.getElementById('city');
+    const districtEl = document.getElementById('district');
+    const subdistrictEl = document.getElementById('subdistrict');
+    const postalEl = document.getElementById('postal');
+
+    // Load provinces
+    fetch(`${API}/provinces.json`)
       .then(r => r.json())
-      .then(data => cityEl.innerHTML = '<option value="">Select City/Regency</option>' +
-        data.map(c => `<option value="${c.id}">${c.name}</option>`).join(''));
-  };
+      .then(provs => {
+        provinceEl.innerHTML = '<option value="">Select Province</option>' +
+          provs.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+      });
 
-  cityEl.onchange = () => {
-    const id = cityEl.value;
-    districtEl.innerHTML = '<option>Loading...</option>';
-    subdistrictEl.innerHTML = '<option>Select District first</option>';
-    postalEl.value = '';
-    if (!id) return districtEl.innerHTML = '<option>Select City first</option>';
-    fetch(`${API}/districts/${id}.json`)
-      .then(r => r.json())
-      .then(data => districtEl.innerHTML = '<option value="">Select District</option>' +
-        data.map(d => `<option value="${d.id}">${d.name}</option>`).join(''));
-  };
+    provinceEl.onchange = () => {
+      cityEl.innerHTML = '<option>Loading...</option>';
+      districtEl.innerHTML = '<option>Select City first</option>';
+      subdistrictEl.innerHTML = '<option>Select District first</option>';
+      postalEl.value = '';
+      if (!provinceEl.value) return cityEl.innerHTML = '<option>Select Province first</option>';
 
-  districtEl.onchange = () => {
-    const id = districtEl.value;
-    subdistrictEl.innerHTML = '<option>Loading...</option>';
-    postalEl.value = '';
-    if (!id) return subdistrictEl.innerHTML = '<option>Select District first</option>';
-    fetch(`${API}/villages/${id}.json`)
-      .then(r => r.json())
-      .then(data => subdistrictEl.innerHTML = '<option value="">Select Subdistrict</option>' +
-        data.map(s => `<option value="${s.id}" data-postal="${s.postal_code || ''}">${s.name}</option>`).join(''));
-  };
+      fetch(`${API}/regencies/${provinceEl.value}.json`)
+        .then(r => r.json())
+        .then(rs => cityEl.innerHTML = '<option value="">Select City/Regency</option>' +
+          rs.map(c => `<option value="${c.id}">${c.name}</option>`).join(''));
+    };
 
-  subdistrictEl.onchange = () => {
-    const opt = subdistrictEl.selectedOptions[0];
-    postalEl.value = opt ? (opt.dataset.postal || '') : '';
-  };
+    cityEl.onchange = () => {
+      districtEl.innerHTML = '<option>Loading...</option>';
+      subdistrictEl.innerHTML = '<option>Select District first</option>';
+      postalEl.value = '';
+      if (!cityEl.value) return districtEl.innerHTML = '<option>Select City first</option>';
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    const d = new FormData(e.target);
-    const summary = `
+      fetch(`${API}/districts/${cityEl.value}.json`)
+        .then(r => r.json())
+        .then(ds => districtEl.innerHTML = '<option value="">Select District</option>' +
+          ds.map(d => `<option value="${d.id}">${d.name}</option>`).join(''));
+    };
+
+    districtEl.onchange = () => {
+      subdistrictEl.innerHTML = '<option>Loading...</option>';
+      postalEl.value = '';
+      if (!districtEl.value) return subdistrictEl.innerHTML = '<option>Select District first</option>';
+
+      fetch(`${API}/villages/${districtEl.value}.json`)
+        .then(r => r.json())
+        .then(vs => subdistrictEl.innerHTML = '<option value="">Select Subdistrict</option>' +
+          vs.map(v => `<option value="${v.id}" data-postal="${v.postal_code || ''}">${v.name}</option>`).join(''));
+    };
+
+    subdistrictEl.onchange = () => {
+      const opt = subdistrictEl.selectedOptions[0];
+      postalEl.value = opt ? (opt.dataset.postal || '') : '';
+    };
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      const d = new FormData(e.target);
+      const summary = `
 Full Name: ${d.get('name')}
 Email: ${d.get('email')}
 Phone: ${d.get('phone')}
+Address: ${d.get('address')}
 Province ID: ${d.get('province')}
 City ID: ${d.get('city')}
 District ID: ${d.get('district')}
 Subdistrict ID: ${d.get('subdistrict')}
 Postal Code: ${d.get('postal')}
-Street Address: ${d.get('address')}
 Notes: ${d.get('notes') || 'None'}
-    `;
-    alert('Order submitted!\n\n' + summary);
-    e.target.reset();
-    postalEl.value = '';
-  }
-</script>
+`;
+      alert('Your order has been submitted!\n\n' + summary);
+      e.target.reset();
+      postalEl.value = '';
+    }
+  </script>
 </body>
 </html>
