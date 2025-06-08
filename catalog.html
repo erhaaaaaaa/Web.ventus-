@@ -380,18 +380,12 @@
       } else {
         delete cartData[id];
       }
-      updateCartBadge();
+
       renderCartItems();
-    }
-
-    function updateCartBadge() {
-      const totalCount = Object.values(cartData).reduce((acc, item) => acc + item.quantity, 0);
-      cartBadge.style.display = totalCount > 0 ? 'block' : 'none';
-      cartBadge.textContent = totalCount;
-    }
-
-    function formatIDR(num) {
-      return 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      updateBadge();
+      
+      // Simpan data cart dan total harga ke localStorage
+      localStorage.setItem('cartData', JSON.stringify(cartData));
     }
 
     function renderCartItems() {
@@ -400,6 +394,8 @@
       if (items.length === 0) {
         cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
         cartTotal.textContent = 'IDR 0';
+        localStorage.setItem('totalHarga', 0);
+        localStorage.setItem('cartData', JSON.stringify({}));
         return;
       }
 
@@ -426,24 +422,57 @@
       });
 
       cartTotal.textContent = formatIDR(total);
+
+      // Simpan total harga ke localStorage
+      localStorage.setItem('totalHarga', total);
+      localStorage.setItem('cartData', JSON.stringify(cartData));
     }
 
-    function toggleCart() {
-      cartSidebar.classList.toggle('open');
+    function updateBadge() {
+      const totalCount = Object.values(cartData).reduce((sum, item) => sum + item.quantity, 0);
+      if (totalCount > 0) {
+        cartBadge.style.display = 'block';
+        cartBadge.textContent = totalCount;
+      } else {
+        cartBadge.style.display = 'none';
+      }
     }
+
+    function formatIDR(number) {
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(number);
+    }
+
+    cartIcon.addEventListener('click', () => {
+      cartSidebar.classList.toggle('open');
+    });
+
+    cartCloseBtn.addEventListener('click', () => {
+      cartSidebar.classList.remove('open');
+    });
 
     function checkout() {
       window.location.href = 'checkout.html';
     }
 
-    cartIcon.addEventListener('click', toggleCart);
-    cartCloseBtn.addEventListener('click', toggleCart);
-
-    document.addEventListener('click', (e) => {
-      if (!cartSidebar.contains(e.target) && !cartIcon.contains(e.target) && cartSidebar.classList.contains('open')) {
-        toggleCart();
+    // Saat halaman dimuat, coba load data cart dari localStorage supaya tersinkronisasi
+    function loadCartFromStorage() {
+      const storedCart = localStorage.getItem('cartData');
+      if (storedCart) {
+        cartData = JSON.parse(storedCart);
+        // Set counter spans sesuai data yg tersimpan
+        Object.entries(cartData).forEach(([id, item]) => {
+          const itemElement = document.querySelector(`.item[data-id="${id}"]`);
+          if (itemElement) {
+            const span = itemElement.querySelector('.counter span');
+            span.textContent = item.quantity;
+          }
+        });
+        renderCartItems();
+        updateBadge();
       }
-    });
+    }
+
+    loadCartFromStorage();
   </script>
 </body>
 </html>
