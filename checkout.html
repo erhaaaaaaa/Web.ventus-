@@ -1,218 +1,133 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Checkout - Detail Pengiriman</title>
-
-  <style>
-    /* Reset dasar */
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-
-    body, html {
-      height: 100%;
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #f0e68c; /* cream */
-    }
-
-    /* Background image dengan overlay */
-    body {
-      position: relative;
-      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
-      height: 100vh;
-      overflow: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: rgba(0, 0, 0, 0.65); /* overlay gelap */
-      z-index: 0;
-    }
-
-    /* Container form di tengah */
-    .container {
-      position: relative;
-      background-color: rgba(255, 215, 0, 0.15); /* transparan emas */
-      padding: 30px 35px;
-      border-radius: 14px;
-      max-width: 450px;
-      width: 100%;
-      box-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
-      z-index: 1; /* agar di atas overlay */
-      text-align: center;
-    }
-
-    h1 {
-      color: #ffd700;
-      margin-bottom: 25px;
-      font-weight: 700;
-      font-size: 2.5rem;
-      text-shadow: 0 0 10px #ffd700;
-    }
-
-    form {
-      text-align: left;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      color: #333;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"],
-    textarea {
-      width: 100%;
-      padding: 12px 14px;
-      margin-bottom: 18px;
-      border-radius: 8px;
-      border: 2px solid #ffd700;
-      font-size: 1rem;
-      font-family: inherit;
-      outline-offset: 2px;
-      transition: border-color 0.3s ease;
-      resize: vertical;
-    }
-
-    input[type="text"]:focus,
-    input[type="email"]:focus,
-    input[type="tel"]:focus,
-    textarea:focus {
-      border-color: #fff100;
-      background-color: #fffced;
-    }
-
-    textarea {
-      min-height: 90px;
-    }
-
-    button[type="submit"] {
-      width: 100%;
-      padding: 14px 0;
-      background-color: #ffd700;
-      border: none;
-      border-radius: 12px;
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #222;
-      cursor: pointer;
-      box-shadow: 0 0 15px #ffd700;
-      transition: background-color 0.3s ease;
-    }
-
-    button[type="submit"]:hover,
-    button[type="submit"]:focus {
-      background-color: #fff100;
-    }
-
-    /* Responsive */
-    @media (max-width: 480px) {
-      .container {
-        padding: 20px 20px;
-      }
-      h1 {
-        font-size: 2rem;
-      }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Estimasi Ongkir</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: url('https://i.imgur.com/hY8dyQh.jpeg') no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+  }
+  .overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.75);
+    z-index: 0;
+  }
+  .container {
+    position: relative;
+    z-index: 1;
+    background-color: #000;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.7);
+    width: 320px;
+    text-align: center;
+  }
+  label {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: white;
+    text-align: left;
+  }
+  input[type="number"],
+  select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 2px solid gold;
+    background-color: #222;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  input[type="number"]:focus,
+  select:focus {
+    border-color: #ffd700;
+  }
+  button#calcOngkir {
+    margin-top: 25px;
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    background-color: gold;
+    border: none;
+    border-radius: 8px;
+    color: #222;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+  }
+  button#calcOngkir:hover {
+    background-color: #e6c200;
+  }
+  #resultOngkir {
+    margin-top: 20px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: gold;
+    min-height: 24px;
+  }
+</style>
 </head>
 <body>
-  <div class="container" role="main" aria-label="Formulir detail pengiriman">
-    <h1>Detail Pengiriman</h1>
-    <form id="shippingForm" novalidate>
-      <label for="fullName">Nama Lengkap</label>
-      <input
-        type="text"
-        id="fullName"
-        name="fullName"
-        placeholder="Masukkan nama lengkap"
-        required
-        autocomplete="name"
-      />
+  <div class="overlay"></div>
+  <div class="container" role="main" aria-label="Form estimasi ongkir">
+    <h2>Estimasi Biaya Pengiriman</h2>
 
-      <label for="email">Email</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        placeholder="contoh@mail.com"
-        required
-        autocomplete="email"
-      />
-
-      <label for="phone">No. Telepon</label>
-      <input
-        type="tel"
-        id="phone"
-        name="phone"
-        placeholder="081234567890"
-        pattern="[0-9]{10,15}"
-        required
-        autocomplete="tel"
-      />
-
-      <label for="address">Detail Alamat</label>
-      <textarea
-        id="address"
-        name="address"
-        placeholder="Masukkan alamat lengkap"
-        required
-        autocomplete="street-address"
-      ></textarea>
-
-      <button type="submit">Kirim</button>
-    </form>
+    <label for="weight">Berat Barang (kg)</label>
+    <input type="number" id="weight" name="weight" min="0.1" step="0.1" required aria-required="true" aria-describedby="weightHelp" />
+    
+    <label for="city">Kota Tujuan</label>
+    <select id="city" name="city" required aria-required="true">
+      <option value="">Pilih kota</option>
+      <option value="jakarta">Jakarta</option>
+      <option value="bandung">Bandung</option>
+      <option value="surabaya">Surabaya</option>
+    </select>
+    
+    <button id="calcOngkir" aria-label="Hitung estimasi ongkos kirim">Hitung Estimasi Ongkir</button>
+    
+    <p id="resultOngkir" role="alert" aria-live="polite"></p>
   </div>
 
   <script>
-    const form = document.getElementById('shippingForm');
+    const ongkirRates = {
+      jakarta: 15000, // per kg
+      bandung: 12000,
+      surabaya: 18000,
+    };
 
-    form.addEventListener('submit', e => {
-      e.preventDefault();
+    document.getElementById('calcOngkir').addEventListener('click', () => {
+      const weight = parseFloat(document.getElementById('weight').value);
+      const city = document.getElementById('city').value;
+      const result = document.getElementById('resultOngkir');
 
-      const fullName = form.fullName.value.trim();
-      const email = form.email.value.trim();
-      const phone = form.phone.value.trim();
-      const address = form.address.value.trim();
-
-      if (!fullName || !email || !phone || !address) {
-        alert('Mohon isi semua kolom dengan lengkap.');
+      if (!weight || weight <= 0) {
+        result.textContent = 'Masukkan berat barang yang valid.';
+        return;
+      }
+      if (!city) {
+        result.textContent = 'Pilih kota tujuan.';
         return;
       }
 
-      // Validasi email sederhana
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailPattern.test(email)) {
-        alert('Format email tidak valid.');
-        form.email.focus();
-        return;
-      }
+      const rate = ongkirRates[city];
+      const cost = weight * rate;
+      const cityName = city.charAt(0).toUpperCase() + city.slice(1);
 
-      // Validasi nomor telepon (10-15 digit angka)
-      const phonePattern = /^[0-9]{10,15}$/;
-      if (!phonePattern.test(phone)) {
-        alert('No. Telepon harus berupa 10-15 digit angka.');
-        form.phone.focus();
-        return;
-      }
-
-      alert(`Terima kasih, ${fullName}! Detail pengiriman Anda sudah diterima.`);
-      form.reset();
-      // Bisa tambahkan redirect atau proses lain disini
+      result.textContent = `Estimasi biaya pengiriman ke ${cityName}: Rp ${cost.toLocaleString('id-ID')}`;
     });
   </script>
 </body>
