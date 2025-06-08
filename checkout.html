@@ -1,24 +1,20 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Checkout - Ventus</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
       padding: 20px;
-      background: #f5f5f5;
+      background: #f3f3f3;
     }
 
     h1 {
       text-align: center;
-      color: #333;
+      margin-bottom: 20px;
     }
 
     form {
@@ -27,7 +23,7 @@
       background: white;
       padding: 20px;
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
     label {
@@ -36,7 +32,7 @@
       font-weight: bold;
     }
 
-    input, textarea {
+    input {
       width: 100%;
       padding: 8px;
       margin-top: 5px;
@@ -46,23 +42,23 @@
     #map {
       height: 300px;
       margin-top: 20px;
-      border-radius: 8px;
+      border-radius: 6px;
     }
 
     button {
       margin-top: 20px;
+      background: #ffd700;
+      border: none;
       padding: 12px;
       width: 100%;
-      background: #222;
-      color: white;
-      border: none;
-      font-size: 16px;
-      border-radius: 5px;
+      font-size: 1rem;
+      border-radius: 6px;
+      font-weight: bold;
       cursor: pointer;
     }
 
     button:hover {
-      background: #444;
+      background: #ffea00;
     }
   </style>
 </head>
@@ -72,42 +68,39 @@
 
   <form id="checkoutForm">
     <label for="name">Nama Lengkap</label>
-    <input type="text" id="name" name="name" required>
+    <input type="text" id="name" required />
 
     <label for="email">Email</label>
-    <input type="email" id="email" name="email" required>
+    <input type="email" id="email" required />
 
-    <label for="phone">No. Telepon</label>
-    <input type="tel" id="phone" name="phone" required>
+    <label for="phone">Nomor Telepon</label>
+    <input type="tel" id="phone" required />
 
     <label for="address">Alamat Lengkap</label>
-    <textarea id="address" name="address" required></textarea>
-
-    <div id="map"></div>
+    <input type="text" id="address" required />
 
     <label for="province">Provinsi</label>
-    <input type="text" id="province" name="province" readonly>
+    <input type="text" id="province" readonly />
 
     <label for="city">Kota/Kabupaten</label>
-    <input type="text" id="city" name="city" readonly>
+    <input type="text" id="city" readonly />
 
     <label for="district">Kecamatan</label>
-    <input type="text" id="district" name="district" readonly>
+    <input type="text" id="district" readonly />
 
     <label for="postal">Kode Pos</label>
-    <input type="text" id="postal" name="postal" readonly>
+    <input type="text" id="postal" readonly />
+
+    <div id="map"></div>
 
     <button type="submit">Kirim Pesanan</button>
   </form>
 
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
     const defaultLatLng = [-6.588553, 106.787109]; // Cimanggu, Bogor
 
     const map = L.map('map').setView(defaultLatLng, 15);
-
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
@@ -136,15 +129,28 @@
       reverseGeocode(latlng.lat, latlng.lng);
     });
 
-    // Inisialisasi langsung saat load
+    // Inisialisasi reverse geocoding saat pertama kali
     reverseGeocode(defaultLatLng[0], defaultLatLng[1]);
 
-    // Simpan data checkout saat submit
+    // Submit form
     document.getElementById('checkoutForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      alert('Pesanan Anda telah dikirim!');
+
+      const orderData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value,
+        province: document.getElementById('province').value,
+        city: document.getElementById('city').value,
+        district: document.getElementById('district').value,
+        postal: document.getElementById('postal').value,
+        cart: JSON.parse(localStorage.getItem('cart')) || {}
+      };
+
+      localStorage.setItem('orderData', JSON.stringify(orderData));
+      window.location.href = 'summary.html';
     });
   </script>
-
 </body>
 </html>
