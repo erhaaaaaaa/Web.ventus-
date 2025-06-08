@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Order Details - Ventus</title>
+
   <style>
     body {
       margin: 0;
@@ -30,7 +31,7 @@
       flex: 1;
       padding: 30px;
       max-width: 600px;
-      margin: 40px auto 40px;
+      margin: 40px auto 20px;
       background: rgba(0, 0, 0, 0.65);
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.6);
@@ -106,19 +107,24 @@
       <input type="tel" id="phone" name="phone" required pattern="[0-9+ ]+" placeholder="+62 812 3456 7890" />
 
       <label for="province">Province</label>
-      <select id="province" name="province" required></select>
+      <select id="province" name="province" required>
+        <option value="">Loading provinces...</option>
+      </select>
 
       <label for="city">City / Regency</label>
-      <select id="city" name="city" required></select>
+      <select id="city" name="city" required disabled>
+        <option value="">Select Province first</option>
+      </select>
 
       <label for="district">District</label>
-      <select id="district" name="district" required></select>
-
-      <label for="subdistrict">Subdistrict / Village</label>
-      <select id="subdistrict" name="subdistrict" required></select>
+      <select id="district" name="district" required disabled>
+        <option value="">Select City first</option>
+      </select>
 
       <label for="postal">Postal Code</label>
-      <input type="text" id="postal" name="postal" readonly placeholder="Postal code will appear here" />
+      <select id="postal" name="postal" required disabled>
+        <option value="">Select District first</option>
+      </select>
 
       <label for="address">Street Address</label>
       <textarea id="address" name="address" rows="3" required placeholder="Street name, building, block, etc."></textarea>
@@ -135,143 +141,171 @@
   </footer>
 
   <script>
-    const API = 'https://emsifa.github.io/api-wilayah-indonesia/api';
-
     const provinceSelect = document.getElementById('province');
     const citySelect = document.getElementById('city');
     const districtSelect = document.getElementById('district');
-    const subdistrictSelect = document.getElementById('subdistrict');
-    const postalInput = document.getElementById('postal');
+    const postalSelect = document.getElementById('postal');
 
-    // Load provinces on page load
-    fetch(`${API}/provinces.json`)
-      .then(res => res.json())
-      .then(provinces => {
+    let provinces = [];
+    let cities = [];
+    let districts = [];
+
+    async function fetchProvinces() {
+      try {
+        const response = await fetch('https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json');
+        provinces = await response.json();
         provinceSelect.innerHTML = '<option value="">Select Province</option>';
-        provinces.forEach(p => {
+        provinces.forEach(prov => {
           const opt = document.createElement('option');
-          opt.value = p.id;
-          opt.textContent = p.name;
+          opt.value = prov.id;
+          opt.textContent = prov.name;
           provinceSelect.appendChild(opt);
         });
-        // Clear downstream selects
+        provinceSelect.disabled = false;
+      } catch (error) {
+        console.error('Failed to fetch provinces:', error);
+        provinceSelect.innerHTML = '<option value="">Failed to load provinces</option>';
+        provinceSelect.disabled = true;
+      }
+    }
+
+    async function fetchCities(provinceId) {
+      citySelect.innerHTML = '<option value="">Loading cities/regencies...</option>';
+      citySelect.disabled = true;
+      districtSelect.innerHTML = '<option value="">Select City first</option>';
+      districtSelect.disabled = true;
+      postalSelect.innerHTML = '<option value="">Select District first</option>';
+      postalSelect.disabled = true;
+
+      try {
+        const response = await fetch(`https://emsifa.github.io/api-wilayah-indonesia/api/regencies/${provinceId}.json`);
+        cities = await response.json();
         citySelect.innerHTML = '<option value="">Select City/Regency</option>';
+        cities.forEach(city => {
+          const opt = document.createElement('option');
+          opt.value = city.id;
+          opt.textContent = city.name;
+          citySelect.appendChild(opt);
+        });
+        citySelect.disabled = false;
+      } catch (error) {
+        console.error('Failed to fetch cities:', error);
+        citySelect.innerHTML = '<option value="">Failed to load cities</option>';
+        citySelect.disabled = true;
+      }
+    }
+
+    async function fetchDistricts(cityId) {
+      districtSelect.innerHTML = '<option value="">Loading districts...</option>';
+      districtSelect.disabled = true;
+      postalSelect.innerHTML = '<option value="">Select District first</option>';
+      postalSelect.disabled = true;
+
+      try {
+        const response = await fetch(`https://emsifa.github.io/api-wilayah-indonesia/api/districts/${cityId}.json`);
+        districts = await response.json();
         districtSelect.innerHTML = '<option value="">Select District</option>';
-        subdistrictSelect.innerHTML = '<option value="">Select Subdistrict/Village</option>';
-        postalInput.value = '';
-      });
-
-    provinceSelect.addEventListener('change', () => {
-      const provinceId = provinceSelect.value;
-      citySelect.innerHTML = '<option>Loading...</option>';
-      districtSelect.innerHTML = '<option>Select District</option>';
-      subdistrictSelect.innerHTML = '<option>Select Subdistrict/Village</option>';
-      postalInput.value = '';
-
-      if (!provinceId) {
-        citySelect.innerHTML = '<option value="">Select City/Regency</option>';
-        return;
-      }
-
-      fetch(`${API}/regencies/${provinceId}.json`)
-        .then(res => res.json())
-        .then(cities => {
-          citySelect.innerHTML = '<option value="">Select City/Regency</option>';
-          cities.forEach(c => {
-            const opt = document.createElement('option');
-            opt.value = c.id;
-            opt.textContent = c.name;
-            citySelect.appendChild(opt);
-          });
+        districts.forEach(district => {
+          const opt = document.createElement('option');
+          opt.value = district.id;
+          opt.textContent = district.name;
+          districtSelect.appendChild(opt);
         });
-    });
-
-    citySelect.addEventListener('change', () => {
-      const cityId = citySelect.value;
-      districtSelect.innerHTML = '<option>Loading...</option>';
-      subdistrictSelect.innerHTML = '<option>Select Subdistrict/Village</option>';
-      postalInput.value = '';
-
-      if (!cityId) {
-        districtSelect.innerHTML = '<option value="">Select District</option>';
-        return;
+        districtSelect.disabled = false;
+      } catch (error) {
+        console.error('Failed to fetch districts:', error);
+        districtSelect.innerHTML = '<option value="">Failed to load districts</option>';
+        districtSelect.disabled = true;
       }
+    }
 
-      fetch(`${API}/districts/${cityId}.json`)
-        .then(res => res.json())
-        .then(districts => {
-          districtSelect.innerHTML = '<option value="">Select District</option>';
-          districts.forEach(d => {
-            const opt = document.createElement('option');
-            opt.value = d.id;
-            opt.textContent = d.name;
-            districtSelect.appendChild(opt);
-          });
-        });
-    });
+    async function fetchPostalCodes(districtId) {
+      postalSelect.innerHTML = '<option value="">Loading postal codes...</option>';
+      postalSelect.disabled = true;
 
-    districtSelect.addEventListener('change', () => {
-      const districtId = districtSelect.value;
-      subdistrictSelect.innerHTML = '<option>Loading...</option>';
-      postalInput.value = '';
-
-      if (!districtId) {
-        subdistrictSelect.innerHTML = '<option value="">Select Subdistrict/Village</option>';
-        return;
+      try {
+        // EMSIFA API does not provide postal codes via API, so simulate:
+        // We can map postal code from district id or name (but no direct API),
+        // So we can put the district id as postal code for demo or fetch from a static map later.
+        // For now, just put dummy postal code equal district id.
+        // (Or you can scrap postal codes manually and replace here)
+        postalSelect.innerHTML = `<option value="${districtId}">Postal Code ${districtId}</option>`;
+        postalSelect.disabled = false;
+      } catch (error) {
+        console.error('Failed to fetch postal codes:', error);
+        postalSelect.innerHTML = '<option value="">Failed to load postal codes</option>';
+        postalSelect.disabled = true;
       }
+    }
 
-      fetch(`${API}/villages/${districtId}.json`)
-        .then(res => res.json())
-        .then(subdistricts => {
-          subdistrictSelect.innerHTML = '<option value="">Select Subdistrict/Village</option>';
-          subdistricts.forEach(s => {
-            const opt = document.createElement('option');
-            opt.value = s.id;
-            opt.textContent = s.name;
-            opt.dataset.postal = s.postal_code || '';
-            subdistrictSelect.appendChild(opt);
-          });
-        });
-    });
-
-    subdistrictSelect.addEventListener('change', () => {
-      const selectedOption = subdistrictSelect.selectedOptions[0];
-      if (selectedOption) {
-        postalInput.value = selectedOption.dataset.postal || '';
+    provinceSelect.addEventListener('change', (e) => {
+      const provinceId = e.target.value;
+      if (provinceId) {
+        fetchCities(provinceId);
       } else {
-        postalInput.value = '';
+        citySelect.innerHTML = '<option value="">Select Province first</option>';
+        citySelect.disabled = true;
+        districtSelect.innerHTML = '<option value="">Select City first</option>';
+        districtSelect.disabled = true;
+        postalSelect.innerHTML = '<option value="">Select District first</option>';
+        postalSelect.disabled = true;
       }
     });
 
-    function handleSubmit(e) {
-      e.preventDefault();
+    citySelect.addEventListener('change', (e) => {
+      const cityId = e.target.value;
+      if (cityId) {
+        fetchDistricts(cityId);
+      } else {
+        districtSelect.innerHTML = '<option value="">Select City first</option>';
+        districtSelect.disabled = true;
+        postalSelect.innerHTML = '<option value="">Select District first</option>';
+        postalSelect.disabled = true;
+      }
+    });
 
-      const form = e.target;
+    districtSelect.addEventListener('change', (e) => {
+      const districtId = e.target.value;
+      if (districtId) {
+        fetchPostalCodes(districtId);
+      } else {
+        postalSelect.innerHTML = '<option value="">Select District first</option>';
+        postalSelect.disabled = true;
+      }
+    });
+
+    function handleSubmit(event) {
+      event.preventDefault();
+
+      const form = document.getElementById("orderForm");
       const formData = new FormData(form);
 
       const summary = `
-Full Name: ${formData.get('name')}
-Email: ${formData.get('email')}
-Phone: ${formData.get('phone')}
-Province: ${provinceSelect.options[provinceSelect.selectedIndex]?.text || ''}
-City/Regency: ${citySelect.options[citySelect.selectedIndex]?.text || ''}
-District: ${districtSelect.options[districtSelect.selectedIndex]?.text || ''}
-Subdistrict/Village: ${subdistrictSelect.options[subdistrictSelect.selectedIndex]?.text || ''}
-Postal Code: ${postalInput.value}
-Street Address: ${formData.get('address')}
-Order Notes: ${formData.get('notes') || 'None'}
+Full Name: ${formData.get("name")}
+Email: ${formData.get("email")}
+Phone: ${formData.get("phone")}
+Province: ${provinceSelect.options[provinceSelect.selectedIndex].text}
+City: ${citySelect.options[citySelect.selectedIndex].text}
+District: ${districtSelect.options[districtSelect.selectedIndex].text}
+Postal Code: ${postalSelect.value}
+Street Address: ${formData.get("address")}
+Notes: ${formData.get("notes") || "None"}
       `;
 
-      alert('Your order has been successfully submitted!\n\n' + summary);
-
+      alert("Your order has been successfully submitted!\n\n" + summary);
       form.reset();
 
-      // Reset all selects
-      citySelect.innerHTML = '<option value="">Select City/Regency</option>';
-      districtSelect.innerHTML = '<option value="">Select District</option>';
-      subdistrictSelect.innerHTML = '<option value="">Select Subdistrict/Village</option>';
-      postalInput.value = '';
+      // Reset selects
+      citySelect.innerHTML = '<option value="">Select Province first</option>';
+      citySelect.disabled = true;
+      districtSelect.innerHTML = '<option value="">Select City first</option>';
+      districtSelect.disabled = true;
+      postalSelect.innerHTML = '<option value="">Select District first</option>';
+      postalSelect.disabled = true;
     }
+
+    // Initialize
+    fetchProvinces();
   </script>
 
 </body>
