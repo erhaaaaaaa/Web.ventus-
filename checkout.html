@@ -1,55 +1,219 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Checkout</title>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Checkout - Detail Pengiriman</title>
+
   <style>
+    /* Reset dasar */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #f0e68c; /* cream */
+    }
+
+    /* Background image dengan overlay */
     body {
-      font-family: sans-serif;
+      position: relative;
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
+      height: 100vh;
+      overflow: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: 20px;
     }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.65); /* overlay gelap */
+      z-index: 0;
+    }
+
+    /* Container form di tengah */
+    .container {
+      position: relative;
+      background-color: rgba(255, 215, 0, 0.15); /* transparan emas */
+      padding: 30px 35px;
+      border-radius: 14px;
+      max-width: 450px;
+      width: 100%;
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
+      z-index: 1; /* agar di atas overlay */
+      text-align: center;
+    }
+
     h1 {
+      color: #ffd700;
+      margin-bottom: 25px;
+      font-weight: 700;
+      font-size: 2.5rem;
+      text-shadow: 0 0 10px #ffd700;
+    }
+
+    form {
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 1.1rem;
       color: #333;
     }
-    form {
-      max-width: 400px;
-    }
-    input, textarea {
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    textarea {
       width: 100%;
-      padding: 10px;
-      margin: 10px 0;
+      padding: 12px 14px;
+      margin-bottom: 18px;
+      border-radius: 8px;
+      border: 2px solid #ffd700;
+      font-size: 1rem;
+      font-family: inherit;
+      outline-offset: 2px;
+      transition: border-color 0.3s ease;
+      resize: vertical;
     }
-    button {
-      padding: 10px 20px;
-      background: #ffd700;
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus,
+    textarea:focus {
+      border-color: #fff100;
+      background-color: #fffced;
+    }
+
+    textarea {
+      min-height: 90px;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 14px 0;
+      background-color: #ffd700;
       border: none;
+      border-radius: 12px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #222;
       cursor: pointer;
+      box-shadow: 0 0 15px #ffd700;
+      transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover,
+    button[type="submit"]:focus {
+      background-color: #fff100;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px 20px;
+      }
+      h1 {
+        font-size: 2rem;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="container" role="main" aria-label="Formulir detail pengiriman">
+    <h1>Detail Pengiriman</h1>
+    <form id="shippingForm" novalidate>
+      <label for="fullName">Nama Lengkap</label>
+      <input
+        type="text"
+        id="fullName"
+        name="fullName"
+        placeholder="Masukkan nama lengkap"
+        required
+        autocomplete="name"
+      />
 
-  <h1>Shipping Details</h1>
-  <form onsubmit="submitForm(event)">
-    <label for="name">Full Name</label>
-    <input type="text" id="name" required>
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        placeholder="contoh@mail.com"
+        required
+        autocomplete="email"
+      />
 
-    <label for="address">Address</label>
-    <textarea id="address" required></textarea>
+      <label for="phone">No. Telepon</label>
+      <input
+        type="tel"
+        id="phone"
+        name="phone"
+        placeholder="081234567890"
+        pattern="[0-9]{10,15}"
+        required
+        autocomplete="tel"
+      />
 
-    <label for="phone">Phone Number</label>
-    <input type="tel" id="phone" required>
+      <label for="address">Detail Alamat</label>
+      <textarea
+        id="address"
+        name="address"
+        placeholder="Masukkan alamat lengkap"
+        required
+        autocomplete="street-address"
+      ></textarea>
 
-    <button type="submit">Submit</button>
-  </form>
+      <button type="submit">Kirim</button>
+    </form>
+  </div>
 
   <script>
-    function submitForm(event) {
-      event.preventDefault();
-      alert('Shipping details submitted!');
-      // Optionally redirect or process further
-    }
-  </script>
+    const form = document.getElementById('shippingForm');
 
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const fullName = form.fullName.value.trim();
+      const email = form.email.value.trim();
+      const phone = form.phone.value.trim();
+      const address = form.address.value.trim();
+
+      if (!fullName || !email || !phone || !address) {
+        alert('Mohon isi semua kolom dengan lengkap.');
+        return;
+      }
+
+      // Validasi email sederhana
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        alert('Format email tidak valid.');
+        form.email.focus();
+        return;
+      }
+
+      // Validasi nomor telepon (10-15 digit angka)
+      const phonePattern = /^[0-9]{10,15}$/;
+      if (!phonePattern.test(phone)) {
+        alert('No. Telepon harus berupa 10-15 digit angka.');
+        form.phone.focus();
+        return;
+      }
+
+      alert(`Terima kasih, ${fullName}! Detail pengiriman Anda sudah diterima.`);
+      form.reset();
+      // Bisa tambahkan redirect atau proses lain disini
+    });
+  </script>
 </body>
 </html>
