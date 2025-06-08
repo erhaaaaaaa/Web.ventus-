@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <!-- Font Awesome CDN untuk icon -->
+  <!-- Font Awesome untuk ikon -->
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -17,7 +17,6 @@
   <title>Catalog</title>
 
   <style>
-    /* Background dari gambar kamu */
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -52,7 +51,7 @@
     }
 
     nav a:hover {
-      color: #ffd700; /* emas mewah */
+      color: #ffd700;
     }
 
     h1 {
@@ -68,16 +67,14 @@
       text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
     }
 
-    ul.products {
-      list-style: none;
-      padding: 0 30px 50px;
-      max-width: 600px;
+    .catalog-items {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 25px;
+      padding: 0 30px 50px;
     }
 
-    ul.products li {
+    .item {
       background: rgba(255, 255, 255, 0.15);
       padding: 20px;
       border-radius: 10px;
@@ -88,17 +85,52 @@
       transition: background 0.3s ease;
     }
 
-    ul.products li:hover {
-      background: rgba(255, 215, 0, 0.7); /* highlight emas */
-      color: #222;
-      cursor: pointer;
+    .item:hover {
+      background: rgba(255, 215, 0, 0.2);
+      color: #fff;
     }
 
-    /* Responsive mobile */
-    @media (max-width: 600px) {
-      ul.products {
-        grid-template-columns: 1fr;
-      }
+    .item img {
+      width: 100%;
+      max-width: 200px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .item h3 {
+      margin: 10px 0 5px;
+    }
+
+    .item p {
+      font-size: 0.9rem;
+      color: #eee;
+      font-weight: normal;
+    }
+
+    .counter {
+      margin-top: 10px;
+    }
+
+    .counter button {
+      background: #ffd700;
+      border: none;
+      color: #222;
+      font-size: 1rem;
+      padding: 5px 10px;
+      margin: 0 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .counter button:hover {
+      background: #fff100;
+    }
+
+    .counter span {
+      font-size: 1rem;
+      min-width: 20px;
+      display: inline-block;
     }
   </style>
 </head>
@@ -110,22 +142,43 @@
   </nav>
 
   <h1>Catalog Page</h1>
-  <p>Ini adalah halaman katalog produk atau layanan kamu. Klik produk untuk info lebih lanjut.</p>
+  <p>Ini adalah halaman katalog produk Ventus. Temukan aroma yang menggambarkan dirimu.</p>
 
-<div class="catalog-items">
+  <div class="catalog-items">
     <div class="item">
-      <a href="https://wa.me/6281234567890?text=Halo%20Ventus,%20saya%20tertarik%20dengan%20Ventus%20Classic" target="_blank">
-        <img src="https://i.imgur.com/w2Ihyed.jpeg" alt="Ventus Classic" />
-        <h3>Ventus Classic</h3>
-        <p>A timeless scent that speaks of power, elegance, and wind.</p>
-      </a>
+      <img src="https://i.imgur.com/w2Ihyed.jpeg" alt="Ventus Classic" />
+      <h3>Ventus Classic</h3>
+      <p>A timeless scent that speaks of power, elegance, and wind.</p>
+      <div class="counter">
+        <button onclick="decrease(this)">-</button>
+        <span>0</span>
+        <button onclick="increase(this)">+</button>
+      </div>
     </div>
 
     <div class="item">
-      <a href="https://wa.me/6281234567890?text=Halo%20Ventus,%20saya%20tertarik%20dengan%20Ventus%20Noire" target="_blank">
-        <img src="https://i.imgur.com/XNGpyQQ.jpeg" alt="Ventus Noire" />
-        <h3>Ventus Noire</h3>
-        <p>Deep and magnetic — crafted for bold, modern elegance.</p>
-  </ul>
+      <img src="https://i.imgur.com/XNGpyQQ.jpeg" alt="Ventus Noire" />
+      <h3>Ventus Noire</h3>
+      <p>Deep and magnetic — crafted for bold, modern elegance.</p>
+      <div class="counter">
+        <button onclick="decrease(this)">-</button>
+        <span>0</span>
+        <button onclick="increase(this)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function increase(button) {
+      const span = button.parentElement.querySelector('span');
+      span.textContent = parseInt(span.textContent) + 1;
+    }
+
+    function decrease(button) {
+      const span = button.parentElement.querySelector('span');
+      const current = parseInt(span.textContent);
+      if (current > 0) span.textContent = current - 1;
+    }
+  </script>
 </body>
 </html>
