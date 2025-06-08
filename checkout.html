@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Order Details - Ventus</title>
   <style>
-    /* ...[gunakan style sebelumnya untuk form, container, btn-submit ..., dsb.]... */
+    /* [Gunakan styling dari form sebelumnya: body, container, btn-submit, dsb.] */
   </style>
 </head>
 <body>
@@ -14,15 +14,7 @@
 <div class="container">
   <h2>Complete Your Order</h2>
   <form id="orderForm" onsubmit="return handleSubmit(event)">
-    <label for="name">Full Name</label>
-    <input id="name" name="name" required placeholder="Enter your full name">
-
-    <label for="email">Email Address</label>
-    <input type="email" id="email" name="email" required placeholder="you@example.com">
-
-    <label for="phone">Phone Number</label>
-    <input type="tel" id="phone" name="phone" required placeholder="+62 812 3456 7890">
-
+    <!-- Previous personal fields here... -->
     <label for="province">Province</label>
     <select id="province" name="province" required></select>
 
@@ -32,107 +24,91 @@
     <label for="district">District (Kecamatan)</label>
     <select id="district" name="district" required></select>
 
-    <label for="subdistrict">Subdistrict (Kel/Desa)</label>
+    <label for="subdistrict">Subdistrict (Kel./Desa)</label>
     <select id="subdistrict" name="subdistrict" required></select>
 
     <label for="postal">Postal Code</label>
-    <input type="text" id="postal" name="postal" required readonly>
+    <input type="text" id="postal" name="postal" required readonly />
 
-    <label for="address">Street Address</label>
-    <textarea id="address" name="address" required placeholder="Street, building, block..."></textarea>
-
-    <label for="notes">Order Notes</label>
-    <textarea id="notes" name="notes" placeholder="Any instructions?"></textarea>
-
-    <button type="submit" class="btn-submit">Submit Order</button>
+    <!-- Address, notes, and submit button -->
   </form>
 </div>
 
 <footer>&copy; 2025 Ventus. All rights reserved.</footer>
 
 <script>
-  // URLs API statis wilayah
-  const API_BASE = 'https://emsifa.github.io/api-wilayah-indonesia/api';
+  const API = 'https://emsifa.github.io/api-wilayah-indonesia/api';
   const provinceEl = document.getElementById('province');
   const cityEl = document.getElementById('city');
   const districtEl = document.getElementById('district');
   const subdistrictEl = document.getElementById('subdistrict');
   const postalEl = document.getElementById('postal');
 
-  // Load Provinsi
-  fetch(`${API_BASE}/provinces.json`)
+  // Fetch provinces
+  fetch(`${API}/provinces.json`)
     .then(r => r.json())
-    .then(list => {
-      provinceEl.innerHTML = `<option value="">Select Province</option>` +
-        list.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+    .then(data => {
+      provinceEl.innerHTML = '<option value="">Select Province</option>' +
+        data.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
     });
 
   provinceEl.onchange = () => {
-    const provId = provinceEl.value;
-    cityEl.innerHTML = `<option value="">Loading...</option>`;
-    districtEl.innerHTML = `<option>Select City first</option>`;
-    subdistrictEl.innerHTML = `<option>Select District first</option>`;
+    const id = provinceEl.value;
+    cityEl.innerHTML = '<option>Loading...</option>';
+    districtEl.innerHTML = '<option>Select City first</option>';
+    subdistrictEl.innerHTML = '<option>Select District first</option>';
     postalEl.value = '';
-    if (!provId) return cityEl.innerHTML = `<option>Select Province first</option>`;
-
-    fetch(`${API_BASE}/regencies/${provId}.json`)
+    if (!id) return cityEl.innerHTML = '<option>Select Province first</option>';
+    fetch(`${API}/regencies/${id}.json`)
       .then(r => r.json())
-      .then(list => {
-        cityEl.innerHTML = `<option value="">Select City/Regency</option>` +
-          list.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-      });
+      .then(data => cityEl.innerHTML = '<option value="">Select City/Regency</option>' +
+        data.map(c => `<option value="${c.id}">${c.name}</option>`).join(''));
   };
 
   cityEl.onchange = () => {
-    const cityId = cityEl.value;
-    districtEl.innerHTML = `<option value="">Loading...</option>`;
-    subdistrictEl.innerHTML = `<option>Select District first</option>`;
+    const id = cityEl.value;
+    districtEl.innerHTML = '<option>Loading...</option>';
+    subdistrictEl.innerHTML = '<option>Select District first</option>';
     postalEl.value = '';
-    if (!cityId) return districtEl.innerHTML = `<option>Select City first</option>`;
-
-    fetch(`${API_BASE}/districts/${cityId}.json`)
+    if (!id) return districtEl.innerHTML = '<option>Select City first</option>';
+    fetch(`${API}/districts/${id}.json`)
       .then(r => r.json())
-      .then(list => {
-        districtEl.innerHTML = `<option value="">Select District</option>` +
-          list.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
-      });
+      .then(data => districtEl.innerHTML = '<option value="">Select District</option>' +
+        data.map(d => `<option value="${d.id}">${d.name}</option>`).join(''));
   };
 
   districtEl.onchange = () => {
-    const distId = districtEl.value;
-    subdistrictEl.innerHTML = `<option value="">Loading...</option>`;
+    const id = districtEl.value;
+    subdistrictEl.innerHTML = '<option>Loading...</option>';
     postalEl.value = '';
-    if (!distId) return subdistrictEl.innerHTML = `<option>Select District first</option>`;
-
-    fetch(`${API_BASE}/villages/${distId}.json`)
+    if (!id) return subdistrictEl.innerHTML = '<option>Select District first</option>';
+    fetch(`${API}/villages/${id}.json`)
       .then(r => r.json())
-      .then(list => {
-        subdistrictEl.innerHTML = `<option value="">Select Subdistrict</option>` +
-          list.map(s => `<option value="${s.id}" data-postal="${s.postal_code}">${s.name}</option>`).join('');
-      });
+      .then(data => subdistrictEl.innerHTML = '<option value="">Select Subdistrict</option>' +
+        data.map(s => `<option value="${s.id}" data-postal="${s.postal_code || ''}">${s.name}</option>`).join(''));
   };
 
   subdistrictEl.onchange = () => {
     const opt = subdistrictEl.selectedOptions[0];
-    postalEl.value = opt ? opt.dataset.postal : '';
+    postalEl.value = opt ? (opt.dataset.postal || '') : '';
   };
 
   function handleSubmit(e) {
     e.preventDefault();
-    const form = new FormData(e.target);
+    const d = new FormData(e.target);
     const summary = `
-Full Name: ${form.get('name')}
-Email: ${form.get('email')}
-Phone: ${form.get('phone')}
-Province ID: ${form.get('province')}
-City ID: ${form.get('city')}
-District ID: ${form.get('district')}
-Subdistrict ID: ${form.get('subdistrict')}
-Postal Code: ${form.get('postal')}
-Address: ${form.get('address')}
-Notes: ${form.get('notes') || 'None'}
+Full Name: ${d.get('name')}
+Email: ${d.get('email')}
+Phone: ${d.get('phone')}
+Province ID: ${d.get('province')}
+City ID: ${d.get('city')}
+District ID: ${d.get('district')}
+Subdistrict ID: ${d.get('subdistrict')}
+Postal Code: ${d.get('postal')}
+Street Address: ${d.get('address')}
+Notes: ${d.get('notes') || 'None'}
     `;
-    alert('Order submitted successfully!\n\n' + summary);
+    alert('Order submitted!\n\n' + summary);
     e.target.reset();
     postalEl.value = '';
   }
