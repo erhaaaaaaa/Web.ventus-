@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Order Summary</title>
+</head>
+<body>
+
+<h1>Order Summary</h1>
+<div id="order-details"></div>
+
+<label for="district">Enter District:</label>
+<input type="text" id="district" placeholder="Example: Bogor" />
+
+<button id="calculateBtn">Calculate Total Payment</button>
+
+<div id="final-total"></div>
+
+<script>
+  const orderDetailsDiv = document.getElementById('order-details');
+  const finalTotalDiv = document.getElementById('final-total');
+
+  // Load cart data from localStorage
+  const cartTotal = parseFloat(localStorage.getItem('cartTotal')) || 0;
+  const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+  function renderOrder() {
+    if(cartItems.length === 0) {
+      orderDetailsDiv.textContent = "No items in cart.";
+      return;
+    }
+    let html = "<ul>";
+    cartItems.forEach(item => {
+      html += `<li>${item.name} — Rp ${item.price.toLocaleString()}</li>`;
+    });
+    html += "</ul>";
+    html += `<p><strong>Subtotal: Rp ${cartTotal.toLocaleString()}</strong></p>`;
+    orderDetailsDiv.innerHTML = html;
+  }
+
+  // Example ongkir data by district (could be from API or static)
+  const ongkirData = {
+    "Bogor": 15000,
+    "Depok": 12000,
+    "Jakarta": 20000,
+    "Bandung": 18000
+  };
+
+  document.getElementById('calculateBtn').addEventListener('click', () => {
+    const district = document.getElementById('district').value.trim();
+    if(!district) {
+      alert("Please enter your district.");
+      return;
+    }
+    const ongkir = ongkirData[district] || 25000; // default ongkir jika tidak ada data
+    const grandTotal = cartTotal + ongkir;
+
+    finalTotalDiv.innerHTML = `
+      <p>Shipping Cost (Ongkir): Rp ${ongkir.toLocaleString()}</p>
+      <p><strong>Total Payment: Rp ${grandTotal.toLocaleString()}</strong></p>
+    `;
+  });
+
+  renderOrder();
+</script>
+
+</body>
+</html>
