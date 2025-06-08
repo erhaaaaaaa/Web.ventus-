@@ -8,7 +8,7 @@
   <!-- FontAwesome CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <title>Catalog with Cart</title>
+  <title>Checkout - Ventus Catalog</title>
 
   <style>
     body {
@@ -435,7 +435,20 @@
     }
 
     function checkout() {
-      alert('Thank you for your order! Proceeding to payment...');
+      if (Object.keys(cartData).length === 0) {
+        alert('Your cart is empty. Please add items before checkout.');
+        return;
+      }
+      let message = 'Thank you for your order!\n\nOrder summary:\n';
+      let total = 0;
+      Object.values(cartData).forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+        message += `${item.name} - Qty: ${item.quantity} - ${formatIDR(itemTotal)}\n`;
+      });
+      message += `\nTotal: ${formatIDR(total)}\n\nProceeding to payment...`;
+      alert(message);
+      // Here you could add further logic, like redirecting or clearing the cart.
     }
 
     cartIcon.addEventListener('click', toggleCart);
