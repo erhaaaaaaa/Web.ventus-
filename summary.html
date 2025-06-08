@@ -6,50 +6,47 @@
   <title>Order Summary - Ventus</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      max-width: 500px;
-      margin: 40px auto;
-      background: #222;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #111;
       color: #fff;
+      max-width: 600px;
+      margin: 30px auto;
       padding: 20px;
-      border-radius: 12px;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    label, p {
-      margin-bottom: 8px;
-      display: block;
-    }
-    input[readonly] {
-      background: #444;
-      color: #eee;
-      border: none;
-      padding: 10px;
-      width: 100%;
-      border-radius: 6px;
-      margin-bottom: 20px;
-    }
-    #finalTotal {
-      background: #333;
-      padding: 15px;
       border-radius: 8px;
-      font-size: 1.2rem;
-      font-weight: bold;
+      background: rgba(0,0,0,0.75);
+      box-shadow: 0 0 15px #ffd700;
+    }
+    h1 {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
+      color: #ffd700;
+    }
+    .summary-item {
+      margin: 15px 0;
+      font-size: 1.1rem;
+      border-bottom: 1px solid #444;
+      padding-bottom: 10px;
+    }
+    .summary-label {
+      font-weight: 600;
+    }
+    .total {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff34d;
     }
     button {
-      background: #ffd700;
-      border: none;
-      padding: 14px 0;
+      margin-top: 30px;
       width: 100%;
+      background: #ffd700;
+      color: black;
       font-weight: bold;
-      font-size: 1.1rem;
+      padding: 15px;
+      font-size: 1.2rem;
+      border: none;
       border-radius: 8px;
       cursor: pointer;
-      color: black;
+      transition: background 0.3s;
     }
     button:hover {
       background: #fff34d;
@@ -57,74 +54,58 @@
   </style>
 </head>
 <body>
-  <h2>Order Summary</h2>
 
-  <label for="district">District</label>
-  <input type="text" id="district" readonly />
+  <h1>Order Summary</h1>
 
-  <label for="cartTotal">Total Price (Cart)</label>
-  <input type="text" id="cartTotal" readonly />
+  <div class="summary-item">
+    <div><span class="summary-label">Total Harga Produk:</span> <span id="totalHarga">-</span></div>
+  </div>
 
-  <div id="finalTotal">
-    <!-- Ongkir + Total Bayar muncul di sini -->
+  <div class="summary-item">
+    <div><span class="summary-label">District (Kecamatan):</span> <span id="district">-</span></div>
+  </div>
+
+  <div class="summary-item">
+    <div><span class="summary-label">Ongkos Kirim:</span> <span id="ongkir">-</span></div>
+  </div>
+
+  <div class="summary-item total">
+    <div><span class="summary-label">Grand Total:</span> <span id="grandTotal">-</span></div>
   </div>
 
   <button id="submitOrderBtn">Submit Order</button>
 
   <script>
-    // Contoh ongkir per district (ubah sesuai data asli)
-    const ongkirData = {
-      "Bogor Barat": 15000,
-      "Bogor Timur": 18000,
-      "Bogor Selatan": 17000,
-      "Bogor Utara": 20000,
-      "Bogor Tengah": 16000
-      // tambah district lain jika perlu
+    // Contoh ongkos kirim per district (bisa kamu ganti/dynamic)
+    const ongkirByDistrict = {
+      "Bogor Selatan": 15000,
+      "Bogor Utara": 12000,
+      "Bogor Timur": 13000,
+      "Bogor Tengah": 14000,
+      "Default": 20000
     };
 
     // Ambil data dari localStorage
-    const cartTotalRaw = localStorage.getItem('cartTotal');
-    const districtRaw = localStorage.getItem('district');
+    const totalHarga = localStorage.getItem('totalHarga') || 0;
+    const district = localStorage.getItem('district') || 'Unknown';
 
-    // Parsing dan format rupiah sederhana
-    const cartTotal = cartTotalRaw ? Number(cartTotalRaw) : 0;
-    const district = districtRaw || "";
+    // Tentukan ongkos kirim berdasar district
+    const ongkir = ongkirByDistrict[district] || ongkirByDistrict["Default"];
 
-    // Set value input
-    document.getElementById('district').value = district;
-    document.getElementById('cartTotal').value = formatRupiah(cartTotal);
+    // Hitung grand total
+    const grandTotal = Number(totalHarga) + Number(ongkir);
 
-    // Hitung ongkir & total
-    function calculateTotalPayment() {
-      if(!district) {
-        document.getElementById('finalTotal').innerHTML = `<p style="color:#f55;">District not found!</p>`;
-        return;
-      }
-      const ongkir = ongkirData[district] || 25000; // default ongkir 25k jika ga ada di list
-      const grandTotal = cartTotal + ongkir;
+    // Tampilkan ke halaman
+    document.getElementById('totalHarga').textContent = `Rp ${Number(totalHarga).toLocaleString('id-ID')}`;
+    document.getElementById('district').textContent = district;
+    document.getElementById('ongkir').textContent = `Rp ${ongkir.toLocaleString('id-ID')}`;
+    document.getElementById('grandTotal').textContent = `Rp ${grandTotal.toLocaleString('id-ID')}`;
 
-      document.getElementById('finalTotal').innerHTML = `
-        <p>Shipping Cost (Ongkir): Rp ${formatRupiah(ongkir)}</p>
-        <p>Total Payment: Rp ${formatRupiah(grandTotal)}</p>
-      `;
-    }
-
-    // Format angka ke rupiah, misal 15000 -> 15,000
-    function formatRupiah(angka) {
-      return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-
-    // Jalankan otomatis saat load
-    window.addEventListener('DOMContentLoaded', () => {
-      calculateTotalPayment();
-    });
-
-    // Tombol submit order
+    // Submit order button handler (kamu bisa hubungkan ke backend)
     document.getElementById('submitOrderBtn').addEventListener('click', () => {
-      alert('Order submitted! Terima kasih sudah berbelanja di Ventus.');
-      // Bisa ditambah submit ke server, redirect, dll sesuai kebutuhan
-      localStorage.clear(); // bersihkan data lokal kalau mau
-      window.location.href = "thankyou.html"; // misal redirect halaman terima kasih
+      alert(`Order submitted!\nTotal: Rp ${grandTotal.toLocaleString('id-ID')}\nTerima kasih sudah berbelanja di Ventus!`);
+      // Misal redirect ke thank you page:
+      // window.location.href = "thankyou.html";
     });
   </script>
 </body>
