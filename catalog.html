@@ -220,14 +220,56 @@
 
       // Disini bisa tambahkan proses kirim data ke server via fetch/ajax
 
-      alert(`Thank you ${name}! Your order has been placed.\nTotal: ${cartTotal.textContent}`);
-      // Reset cart dan form
-      cartData = {};
-      renderCartItems();
-      const counters = document.querySelectorAll('.counter span');
-      counters.forEach(span => span.textContent = '0');
-      event.target.reset();
-      return false;
+      <script>
+  // Fungsi untuk format harga
+  function formatIDR(num) {
+    return 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+  // Ambil data cart dari localStorage
+  let cartData = JSON.parse(localStorage.getItem('cartData')) || {};
+
+  const cartItemsContainer = document.getElementById('cartItemsContainer'); // sesuaikan id container cart di checkout.html
+  const cartTotal = document.getElementById('cartTotal'); // sesuaikan id total harga
+
+  function renderCartItems() {
+    cartItemsContainer.innerHTML = '';
+    const items = Object.values(cartData);
+    if (items.length === 0) {
+      cartItemsContainer.innerHTML = '<p>Keranjang kosong.</p>';
+      cartTotal.textContent = 'IDR 0';
+      return;
+    }
+
+    let total = 0;
+
+    items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'cart-item';
+
+      const totalPrice = item.price * item.quantity;
+      total += totalPrice;
+
+      div.innerHTML = `
+        <img src="${item.img}" alt="${item.name}" />
+        <div class="cart-item-details">
+          <h4>${item.name}</h4>
+          <span>Quantity: ${item.quantity}</span>
+          <span>Price: ${formatIDR(item.price)}</span>
+          <span>Total: ${formatIDR(totalPrice)}</span>
+        </div>
+      `;
+
+      cartItemsContainer.appendChild(div);
+    });
+
+    cartTotal.textContent = formatIDR(total);
+  }
+
+  renderCartItems();
+
+  // Kamu juga bisa tambahkan event untuk form checkout di sini
+</script>
     }
   </script>
 
