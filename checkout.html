@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    form {
+      max-width: 400px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    button {
+      padding: 10px 20px;
+      background: #ffd700;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Shipping Details</h1>
+  <form onsubmit="submitForm(event)">
+    <label for="name">Full Name</label>
+    <input type="text" id="name" required>
+
+    <label for="address">Address</label>
+    <textarea id="address" required></textarea>
+
+    <label for="phone">Phone Number</label>
+    <input type="tel" id="phone" required>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    function submitForm(event) {
+      event.preventDefault();
+      alert('Shipping details submitted!');
+      // Optionally redirect or process further
+    }
+  </script>
+
+</body>
+</html>
