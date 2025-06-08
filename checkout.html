@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Order Details - Ventus</title>
+<title>Order Details - Ventus with Address Search</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <style>
   body {
@@ -65,7 +65,7 @@
   #map {
     height: 350px;
     border-radius: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.7);
   }
 
@@ -97,10 +97,44 @@
   .coords {
     display: flex;
     gap: 15px;
+    margin-bottom: 20px;
   }
 
   .coords input {
     flex: 1;
+  }
+
+  #search-section {
+    margin-bottom: 15px;
+  }
+
+  #search-section input[type="text"] {
+    width: calc(100% - 90px);
+    display: inline-block;
+  }
+
+  #search-section button {
+    width: 80px;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: #ffd700;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  #search-section button:hover {
+    background: #fff34d;
+  }
+
+  #address-display {
+    background: rgba(255 255 255 / 0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
   }
 </style>
 </head>
@@ -125,13 +159,20 @@
     <label for="address">Street Address</label>
     <textarea id="address" name="address" rows="3" required placeholder="Street name, building, block, etc."></textarea>
 
-    <label>Pick Your Location on Map</label>
+    <div id="search-section">
+      <label for="searchAddress">Search Address</label>
+      <input type="text" id="searchAddress" placeholder="Type an address, village, district, city..." />
+      <button type="button" onclick="searchAddress()">Search</button>
+    </div>
+
     <div id="map"></div>
 
     <div class="coords">
       <input type="text" id="lat" name="latitude" placeholder="Latitude" readonly />
       <input type="text" id="lng" name="longitude" placeholder="Longitude" readonly />
     </div>
+
+    <div id="address-display">Selected Address info will appear here.</div>
 
     <label for="notes">Order Notes</label>
     <textarea id="notes" name="notes" rows="3" placeholder="Any additional instructions?"></textarea>
@@ -146,30 +187,78 @@
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-  // Initialize map centered in Indonesia
   const map = L.map('map').setView([-2.5489, 118.0149], 5);
 
-  // Add OpenStreetMap tiles
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '© OpenStreetMap contributors'
   }).addTo(map);
 
   let marker;
+  const latInput = document.getElementById('lat');
+  const lngInput = document.getElementById('lng');
+  const addressDisplay = document.getElementById('address-display');
+  const addressTextarea = document.getElementById('address');
 
-  // On map click, add/move marker & update coords inputs
+  // Pasang marker klik peta
   map.on('click', function(e) {
-    const { lat, lng } = e.latlng;
-    if (marker) {
-      marker.setLatLng(e.latlng);
-    } else {
-      marker = L.marker(e.latlng).addTo(map);
-    }
-    document.getElementById('lat').value = lat.toFixed(6);
-    document.getElementById('lng').value = lng.toFixed(6);
+    placeMarker(e.latlng.lat, e.latlng.lng);
   });
 
-  // Handle form submit
+  function placeMarker(lat, lng, displayName = '') {
+    if (marker) {
+      marker.setLatLng([lat, lng]);
+    } else {
+      marker = L.marker([lat, lng]).addTo(map);
+    }
+    latInput.value = lat.toFixed(6);
+    lngInput.value = lng.toFixed(6);
+    if (displayName) {
+      addressDisplay.textContent = displayName;
+      // Kita bisa update alamat textarea otomatis (optional)
+      addressTextarea.value = displayName;
+    } else {
+      addressDisplay.textContent = 'Address info not available.';
+    }
+    // Pusatkan peta ke marker
+    map.setView([lat, lng], 15);
+  }
+
+  // Fungsi search alamat via Nominatim
+  async function searchAddress() {
+    const query = document.getElementById('searchAddress').value.trim();
+    if (!query) {
+      alert('Please enter an address to search.');
+      return;
+    }
+    const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(query)}&limit=5&countrycodes=id`;
+    
+    try {
+      const res = await fetch(url, { headers: { 'Accept-Language': 'id' } });
+      const results = await res.json();
+      if (results.length === 0) {
+        alert('No results found for that address.');
+        return;
+      }
+      // Pilih hasil pertama
+      const place = results[0];
+      const lat = parseFloat(place.lat);
+      const lon = parseFloat(place.lon);
+      let displayName = place.display_name;
+
+      // Ambil kode pos jika ada
+      let postcode = '';
+      if (place.address && place.address.postcode) {
+        postcode = place.address.postcode;
+        displayName += `, Postal Code: ${postcode}`;
+      }
+
+      placeMarker(lat, lon, displayName);
+    } catch (error) {
+      alert('Error searching address: ' + error);
+    }
+  }
+
   function handleSubmit(event) {
     event.preventDefault();
     const form = event.target;
@@ -185,7 +274,7 @@
     };
 
     if (!data.latitude || !data.longitude) {
-      alert("Please select your location on the map.");
+      alert("Please select your location on the map or use search.");
       return false;
     }
 
@@ -206,8 +295,9 @@ Notes: ${data.notes}
       map.removeLayer(marker);
       marker = null;
     }
-    document.getElementById('lat').value = '';
-    document.getElementById('lng').value = '';
+    latInput.value = '';
+    lngInput.value = '';
+    addressDisplay.textContent = 'Selected Address info will appear here.';
     return false;
   }
 </script>
