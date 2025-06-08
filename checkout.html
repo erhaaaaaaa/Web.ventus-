@@ -99,19 +99,19 @@
     <h2>Complete Your Order</h2>
     <form id="orderForm" onsubmit="return handleSubmit(event)">
       <label for="name">Full Name</label>
-      <input type="text" id="name" name="name" required placeholder="Enter your full name" />
+      <input type="text" id="name" name="name" required placeholder />
 
       <label for="address">Shipping Address</label>
-      <textarea id="address" name="address" rows="3" required placeholder="Street, City, Postal Code, Country"></textarea>
+      <textarea id="address" name="address" rows="3" required placeholder></textarea>
 
       <label for="email">Email Address</label>
-      <input type="email" id="email" name="email" required placeholder="your@example.com" />
+      <input type="email" id="email" name="email" required placeholder />
 
       <label for="phone">Phone Number</label>
-      <input type="tel" id="phone" name="phone" required pattern="[0-9+ ]+" placeholder="+1 234 567 890" />
+      <input type="tel" id="phone" name="phone" required pattern />
 
       <label for="notes">Order Notes</label>
-      <textarea id="notes" name="notes" rows="3" placeholder="Additional notes or special instructions"></textarea>
+      <textarea id="notes" name="notes" rows="3" placeholder></textarea>
 
       <button type="submit" class="btn-submit">Submit Order</button>
     </form>
