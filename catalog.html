@@ -1,477 +1,135 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- FontAwesome CDN -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  />
-
-  <title>Catalog with Cart</title>
-
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: white;
-      background-image: url('https://i.imgur.com/w2Ihyed.jpeg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    nav {
-      background: rgba(0, 0, 0, 0.6);
-      padding: 15px 30px;
-      display: flex;
-      gap: 30px;
-      align-items: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-    }
-
-    nav a {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 1.1rem;
-      transition: color 0.3s ease;
-    }
-
-    nav a:hover {
-      color: #ffd700;
-    }
-
-    h1 {
-      margin: 40px 30px 20px;
-      font-size: 2.8rem;
-      text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
-    }
-
-    p.description {
-      margin: 0 30px 40px;
-      font-size: 1.2rem;
-      max-width: 600px;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
-    }
-
-    .catalog-items {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 25px;
-      padding: 0 30px 50px;
-      flex-grow: 1;
-    }
-
-    .item {
-      background: rgba(255, 255, 255, 0.15);
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-      font-weight: 700;
-      font-size: 1.1rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-      transition: background 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .item:hover {
-      background: rgba(255, 215, 0, 0.2);
-      color: #fff;
-    }
-
-    .item img {
-      width: 100%;
-      max-width: 200px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-
-    .item h3 {
-      margin: 10px 0 5px;
-    }
-
-    .item p {
-      font-size: 0.9rem;
-      color: #eee;
-      font-weight: normal;
-    }
-
-    .price {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #ffd700;
-      margin: 5px 0 10px;
-    }
-
-    .counter {
-      margin-top: auto;
-      margin-bottom: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      font-weight: 700;
-    }
-
-    .counter button {
-      background: #ffd700;
-      border: none;
-      color: #222;
-      font-size: 1rem;
-      padding: 5px 12px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .counter button:hover {
-      background: #fff100;
-    }
-
-    .counter span {
-      font-size: 1.2rem;
-      min-width: 25px;
-      text-align: center;
-      display: inline-block;
-      user-select: none;
-    }
-
-    /* Cart icon fixed right top */
-    .cart-icon {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      font-size: 2.5rem;
-      color: #ffd700;
-      cursor: pointer;
-      z-index: 1100;
-      user-select: none;
-      position: fixed;
-    }
-
-    .cart-badge {
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      background: red;
-      color: white;
-      font-weight: 700;
-      border-radius: 50%;
-      padding: 2px 7px;
-      font-size: 0.8rem;
-      display: none;
-    }
-
-    /* Cart sidebar */
-    .cart-sidebar {
-      position: fixed;
-      top: 0;
-      right: -350px;
-      width: 350px;
-      height: 100vh;
-      background: rgba(0,0,0,0.95);
-      color: white;
-      box-shadow: -3px 0 10px rgba(0,0,0,0.7);
-      padding: 20px;
-      box-sizing: border-box;
-      transition: right 0.4s ease;
-      z-index: 1050;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .cart-sidebar.open {
-      right: 0;
-    }
-
-    .cart-sidebar h2 {
-      margin-top: 0;
-      margin-bottom: 15px;
-      border-bottom: 1px solid #ffd700;
-      padding-bottom: 8px;
-    }
-
-    .cart-item {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 15px;
-      align-items: center;
-    }
-
-    .cart-item img {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 6px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.5);
-    }
-
-    .cart-item-details {
-      flex-grow: 1;
-    }
-
-    .cart-item-details h4 {
-      margin: 0 0 5px;
-      font-size: 1rem;
-    }
-
-    .cart-item-details span {
-      font-size: 0.9rem;
-      color: #ccc;
-      display: block;
-    }
-
-    .cart-item-quantity {
-      font-weight: 700;
-      font-size: 1.1rem;
-      user-select: none;
-    }
-
-    /* Close button */
-    .cart-close {
-      background: none;
-      border: none;
-      color: #ffd700;
-      font-size: 1.8rem;
-      cursor: pointer;
-      align-self: flex-end;
-      margin-bottom: 15px;
-      transition: color 0.2s;
-    }
-
-    .cart-close:hover {
-      color: #fff;
-    }
-
-    /* Proceed to Checkout button */
-    .proceed-btn {
-      margin-top: auto;
-      background: #ffd700;
-      color: #222;
-      font-weight: 700;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1.1rem;
-      transition: background 0.3s ease;
-    }
-
-    .proceed-btn:hover {
-      background: #fff100;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Estimasi Ongkir</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: url('https://i.imgur.com/hY8dyQh.jpeg') no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+  }
+  .overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.75);
+    z-index: 0;
+  }
+  .container {
+    position: relative;
+    z-index: 1;
+    background-color: #000;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.7);
+    width: 320px;
+    text-align: center;
+  }
+  label {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: white;
+    text-align: left;
+  }
+  input[type="number"],
+  select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 2px solid gold;
+    background-color: #222;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  input[type="number"]:focus,
+  select:focus {
+    border-color: #ffd700;
+  }
+  button#calcOngkir {
+    margin-top: 25px;
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    background-color: gold;
+    border: none;
+    border-radius: 8px;
+    color: #222;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+  }
+  button#calcOngkir:hover {
+    background-color: #e6c200;
+  }
+  #resultOngkir {
+    margin-top: 20px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: gold;
+    min-height: 24px;
+  }
+</style>
 </head>
 <body>
+  <div class="overlay"></div>
+  <div class="container" role="main" aria-label="Form estimasi ongkir">
+    <h2>Estimasi Biaya Pengiriman</h2>
 
-  <nav>
-    <a href="index.html"><i class="fas fa-house"></i> Home</a>
-    <a href="catalog.html"><i class="fas fa-box-open"></i> Catalog</a>
-    <a href="about.html"><i class="fas fa-info-circle"></i> About</a>
-  </nav>
-
-  <h1>Catalog Page</h1>
-  <p class="description">Ini adalah halaman katalog produk Ventus. Temukan aroma yang menggambarkan dirimu.</p>
-
-  <div class="catalog-items">
-    <div class="item" data-id="1" data-name="Ventus Fell In Eden" data-price="75000" data-img="https://i.imgur.com/d0TLtWq.jpeg">
-      <img src="https://i.imgur.com/d0TLtWq.jpeg" alt="Ventus Fell In Eden" />
-      <h3>Ventus Fell In Eden</h3>
-      <p>A timeless scent that speaks of power, elegance, and wind.</p>
-      <div class="counter">
-        <button onclick="decrease(this)">-</button>
-        <span>0</span>
-        <button onclick="increase(this)">+</button>
-      </div>
-    </div>
-
-    <div class="item" data-id="2" data-name="Ventus Breathe by Divine" data-price="75000" data-img="https://i.imgur.com/RtSmtYL.jpeg">
-      <img src="https://i.imgur.com/RtSmtYL.jpeg" alt="Ventus Breathe by Divine" />
-      <h3>Ventus Breathe by Divine</h3>
-      <p>Fresh, airy, and soul-touching — for moments that linger.</p>
-      <div class="counter">
-        <button onclick="decrease(this)">-</button>
-        <span>0</span>
-        <button onclick="increase(this)">+</button>
-      </div>
-    </div>
-
-    <div class="item" data-id="3" data-name="Ventus House of Manna" data-price="75000" data-img="https://i.imgur.com/a1VptEV.jpeg">
-      <img src="https://i.imgur.com/a1VptEV.jpeg" alt="Ventus House of Manna" />
-      <h3>Ventus House of Manna</h3>
-      <p>A divine scent that blends warmth and clarity in harmony.</p>
-      <div class="counter">
-        <button onclick="decrease(this)">-</button>
-        <span>0</span>
-        <button onclick="increase(this)">+</button>
-      </div>
-    </div>
+    <label for="weight">Berat Barang (kg)</label>
+    <input type="number" id="weight" name="weight" min="0.1" step="0.1" required aria-required="true" aria-describedby="weightHelp" />
+    
+    <label for="city">Kota Tujuan</label>
+    <select id="city" name="city" required aria-required="true">
+      <option value="">Pilih kota</option>
+      <option value="jakarta">Jakarta</option>
+      <option value="bandung">Bandung</option>
+      <option value="surabaya">Surabaya</option>
+    </select>
+    
+    <button id="calcOngkir" aria-label="Hitung estimasi ongkos kirim">Hitung Estimasi Ongkir</button>
+    
+    <p id="resultOngkir" role="alert" aria-live="polite"></p>
   </div>
-
-  <!-- Cart icon -->
-  <div class="cart-icon" id="cartIcon" title="Open Cart" aria-label="Cart" tabindex="0">
-    <i class="fas fa-shopping-cart"></i>
-    <div class="cart-badge" id="cartBadge">0</div>
-  </div>
-
-  <!-- Cart sidebar -->
-  <aside class="cart-sidebar" id="cartSidebar" aria-hidden="true">
-    <button class="cart-close" id="cartCloseBtn" aria-label="Close Cart">&times;</button>
-    <h2>Your Cart</h2>
-    <div id="cartItemsContainer">
-      <p>Your cart is empty.</p>
-    </div>
-    <button class="proceed-btn" onclick="goToCheckout()" aria-label="Proceed to Checkout">Proceed to Checkout</button>
-  </aside>
 
   <script>
-    // Increase count in product card + update cart
-    function increase(button) {
-      const span = button.parentElement.querySelector('span');
-      let count = parseInt(span.textContent);
-      count++;
-      span.textContent = count;
-      updateCart(button.closest('.item').dataset.id, button.closest('.item'));
-    }
+    const ongkirRates = {
+      jakarta: 15000, // per kg
+      bandung: 12000,
+      surabaya: 18000,
+    };
 
-    // Decrease count in product card + update cart
-    function decrease(button) {
-      const span = button.parentElement.querySelector('span');
-      let count = parseInt(span.textContent);
-      if (count > 0) {
-        count--;
-        span.textContent = count;
-        updateCart(button.closest('.item').dataset.id, button.closest('.item'));
+    document.getElementById('calcOngkir').addEventListener('click', () => {
+      const weight = parseFloat(document.getElementById('weight').value);
+      const city = document.getElementById('city').value;
+      const result = document.getElementById('resultOngkir');
+
+      if (!weight || weight <= 0) {
+        result.textContent = 'Masukkan berat barang yang valid.';
+        return;
       }
-    }
-
-    const cartIcon = document.getElementById('cartIcon');
-    const cartSidebar = document.getElementById('cartSidebar');
-    const cartCloseBtn = document.getElementById('cartCloseBtn');
-    const cartBadge = document.getElementById('cartBadge');
-    const cartItemsContainer = document.getElementById('cartItemsContainer');
-
-    // Cart data stored as id: {name, img, quantity, price}
-    let cartData = {};
-
-    // Update cart data and UI
-    function updateCart(id, itemElement) {
-      const count = parseInt(itemElement.querySelector('.counter span').textContent);
-
-      if (count > 0) {
-        cartData[id] = {
-          name: itemElement.dataset.name,
-          img: itemElement.dataset.img,
-          quantity: count,
-          price: parseInt(itemElement.dataset.price)
-        };
-      } else {
-        delete cartData[id];
-      }
-      updateCartBadge();
-      renderCartItems();
-      saveCartToLocalStorage();
-    }
-
-    // Update cart badge number
-    function updateCartBadge() {
-      const totalCount = Object.values(cartData).reduce((acc, item) => acc + item.quantity, 0);
-      cartBadge.textContent = totalCount;
-      cartBadge.style.display = totalCount > 0 ? 'block' : 'none';
-    }
-
-    // Render cart items in sidebar
-    function renderCartItems() {
-      if (Object.keys(cartData).length === 0) {
-        cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
+      if (!city) {
+        result.textContent = 'Pilih kota tujuan.';
         return;
       }
 
-      cartItemsContainer.innerHTML = '';
-      Object.entries(cartData).forEach(([id, item]) => {
-        const div = document.createElement('div');
-        div.classList.add('cart-item');
+      const rate = ongkirRates[city];
+      const cost = weight * rate;
+      const cityName = city.charAt(0).toUpperCase() + city.slice(1);
 
-        div.innerHTML = `
-          <img src="${item.img}" alt="${item.name}" />
-          <div class="cart-item-details">
-            <h4>${item.name}</h4>
-            <span>Price: Rp ${item.price.toLocaleString()}</span>
-            <span>Qty: ${item.quantity}</span>
-            <span>Total: Rp ${(item.price * item.quantity).toLocaleString()}</span>
-          </div>
-        `;
-        cartItemsContainer.appendChild(div);
-      });
-    }
-
-    // Cart icon toggle
-    cartIcon.addEventListener('click', () => {
-      if (cartSidebar.classList.contains('open')) {
-        cartSidebar.classList.remove('open');
-        cartSidebar.setAttribute('aria-hidden', 'true');
-      } else {
-        cartSidebar.classList.add('open');
-        cartSidebar.setAttribute('aria-hidden', 'false');
-      }
+      result.textContent = `Estimasi biaya pengiriman ke ${cityName}: Rp ${cost.toLocaleString('id-ID')}`;
     });
-
-    // Close cart sidebar button
-    cartCloseBtn.addEventListener('click', () => {
-      cartSidebar.classList.remove('open');
-      cartSidebar.setAttribute('aria-hidden', 'true');
-    });
-
-    // Save cart data to localStorage
-    function saveCartToLocalStorage() {
-      localStorage.setItem('cartData', JSON.stringify(cartData));
-    }
-
-    // Load cart data from localStorage on page load
-    window.addEventListener('load', () => {
-      const savedCart = localStorage.getItem('cartData');
-      if (savedCart) {
-        cartData = JSON.parse(savedCart);
-
-        // Update counts on catalog items
-        Object.entries(cartData).forEach(([id, item]) => {
-          const itemElement = document.querySelector(`.item[data-id="${id}"]`);
-          if (itemElement) {
-            const span = itemElement.querySelector('.counter span');
-            span.textContent = item.quantity;
-          }
-        });
-
-        updateCartBadge();
-        renderCartItems();
-      }
-    });
-
-    // Proceed to checkout - redirect to checkout.html
-    function goToCheckout() {
-      if (Object.keys(cartData).length === 0) {
-        alert('Your cart is empty. Add items before proceeding to checkout.');
-        return;
-      }
-      // Save cart data again before redirecting
-      saveCartToLocalStorage();
-      window.location.href = 'checkout.html';
-    }
   </script>
 </body>
 </html>
+
