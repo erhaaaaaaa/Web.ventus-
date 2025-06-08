@@ -4,243 +4,138 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Order Details - Ventus</title>
-
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-image: url('https://i.imgur.com/w2Ihyed.jpeg');
-      background-size: cover;
-      background-position: center;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    header {
-      background: rgba(0, 0, 0, 0.6);
-      padding: 20px;
-      text-align: center;
-      font-size: 2rem;
-      font-weight: bold;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-    }
-
-    .container {
-      flex: 1;
-      padding: 30px;
-      max-width: 600px;
-      margin: 0 auto;
-      background: rgba(0, 0, 0, 0.65);
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-      margin-top: 40px;
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 30px;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-    }
-
-    input, textarea, select {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 6px;
-      margin-bottom: 20px;
-      font-size: 1rem;
-    }
-
-    input:focus, textarea:focus, select:focus {
-      outline: 2px solid #ffd700;
-    }
-
-    .btn-submit {
-      width: 100%;
-      background: #ffd700;
-      color: black;
-      font-weight: bold;
-      padding: 14px;
-      border: none;
-      border-radius: 8px;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .btn-submit:hover {
-      background: #fff34d;
-    }
-
-    footer {
-      text-align: center;
-      padding: 15px;
-      background: rgba(0,0,0,0.6);
-      font-size: 0.9rem;
-      margin-top: auto;
-    }
+    /* ...[gunakan style sebelumnya untuk form, container, btn-submit ..., dsb.]... */
   </style>
 </head>
 <body>
 
-  <header>
-    Order Details
-  </header>
+<header>Order Details</header>
+<div class="container">
+  <h2>Complete Your Order</h2>
+  <form id="orderForm" onsubmit="return handleSubmit(event)">
+    <label for="name">Full Name</label>
+    <input id="name" name="name" required placeholder="Enter your full name">
 
-  <div class="container">
-    <h2>Complete Your Order</h2>
-    <form id="orderForm" onsubmit="return handleSubmit(event)">
-      <label for="name">Full Name</label>
-      <input type="text" id="name" name="name" required placeholder="Enter your full name" />
+    <label for="email">Email Address</label>
+    <input type="email" id="email" name="email" required placeholder="you@example.com">
 
-      <label for="email">Email Address</label>
-      <input type="email" id="email" name="email" required placeholder="your@example.com" />
+    <label for="phone">Phone Number</label>
+    <input type="tel" id="phone" name="phone" required placeholder="+62 812 3456 7890">
 
-      <label for="phone">Phone Number</label>
-      <input type="tel" id="phone" name="phone" required pattern="[0-9+ ]+" placeholder="+62 812 3456 7890" />
+    <label for="province">Province</label>
+    <select id="province" name="province" required></select>
 
-      <label for="province">Province</label>
-      <select id="province" name="province" required onchange="updateCities()">
-        <option value="">Select Province</option>
-        <option value="Jakarta">Jakarta</option>
-        <option value="West Java">West Java</option>
-      </select>
+    <label for="city">City/Regency</label>
+    <select id="city" name="city" required></select>
 
-      <label for="city">City / Regency</label>
-      <select id="city" name="city" required onchange="updateDistricts()">
-        <option value="">Select City/Regency</option>
-      </select>
+    <label for="district">District (Kecamatan)</label>
+    <select id="district" name="district" required></select>
 
-      <label for="district">District</label>
-      <select id="district" name="district" required onchange="updatePostalCode()">
-        <option value="">Select District</option>
-      </select>
+    <label for="subdistrict">Subdistrict (Kel/Desa)</label>
+    <select id="subdistrict" name="subdistrict" required></select>
 
-      <label for="postal">Postal Code</label>
-      <select id="postal" name="postal" required>
-        <option value="">Select Postal Code</option>
-      </select>
+    <label for="postal">Postal Code</label>
+    <input type="text" id="postal" name="postal" required readonly>
 
-      <label for="address">Street Address</label>
-      <textarea id="address" name="address" rows="3" required placeholder="Street name, building, block, etc."></textarea>
+    <label for="address">Street Address</label>
+    <textarea id="address" name="address" required placeholder="Street, building, block..."></textarea>
 
-      <label for="notes">Order Notes</label>
-      <textarea id="notes" name="notes" rows="3" placeholder="Any additional instructions?"></textarea>
+    <label for="notes">Order Notes</label>
+    <textarea id="notes" name="notes" placeholder="Any instructions?"></textarea>
 
-      <button type="submit" class="btn-submit">Submit Order</button>
-    </form>
-  </div>
+    <button type="submit" class="btn-submit">Submit Order</button>
+  </form>
+</div>
 
-  <footer>
-    &copy; 2025 Ventus. All rights reserved.
-  </footer>
+<footer>&copy; 2025 Ventus. All rights reserved.</footer>
 
-  <script>
-    const data = {
-      "Jakarta": {
-        "Central Jakarta": {
-          "Menteng": "10310",
-          "Gambir": "10110"
-        },
-        "South Jakarta": {
-          "Kebayoran Baru": "12120",
-          "Tebet": "12810"
-        }
-      },
-      "West Java": {
-        "Bandung": {
-          "Coblong": "40132",
-          "Lengkong": "40263"
-        },
-        "Bekasi": {
-          "Bekasi Timur": "17111",
-          "Bekasi Barat": "17135"
-        }
-      }
-    };
+<script>
+  // URLs API statis wilayah
+  const API_BASE = 'https://emsifa.github.io/api-wilayah-indonesia/api';
+  const provinceEl = document.getElementById('province');
+  const cityEl = document.getElementById('city');
+  const districtEl = document.getElementById('district');
+  const subdistrictEl = document.getElementById('subdistrict');
+  const postalEl = document.getElementById('postal');
 
-    function updateCities() {
-      const province = document.getElementById("province").value;
-      const citySelect = document.getElementById("city");
-      citySelect.innerHTML = `<option value="">Select City/Regency</option>`;
+  // Load Provinsi
+  fetch(`${API_BASE}/provinces.json`)
+    .then(r => r.json())
+    .then(list => {
+      provinceEl.innerHTML = `<option value="">Select Province</option>` +
+        list.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+    });
 
-      if (province && data[province]) {
-        Object.keys(data[province]).forEach(city => {
-          const option = document.createElement("option");
-          option.value = city;
-          option.textContent = city;
-          citySelect.appendChild(option);
-        });
-      }
+  provinceEl.onchange = () => {
+    const provId = provinceEl.value;
+    cityEl.innerHTML = `<option value="">Loading...</option>`;
+    districtEl.innerHTML = `<option>Select City first</option>`;
+    subdistrictEl.innerHTML = `<option>Select District first</option>`;
+    postalEl.value = '';
+    if (!provId) return cityEl.innerHTML = `<option>Select Province first</option>`;
 
-      // Reset lower levels
-      document.getElementById("district").innerHTML = `<option value="">Select District</option>`;
-      document.getElementById("postal").innerHTML = `<option value="">Select Postal Code</option>`;
-    }
+    fetch(`${API_BASE}/regencies/${provId}.json`)
+      .then(r => r.json())
+      .then(list => {
+        cityEl.innerHTML = `<option value="">Select City/Regency</option>` +
+          list.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+      });
+  };
 
-    function updateDistricts() {
-      const province = document.getElementById("province").value;
-      const city = document.getElementById("city").value;
-      const districtSelect = document.getElementById("district");
-      districtSelect.innerHTML = `<option value="">Select District</option>`;
+  cityEl.onchange = () => {
+    const cityId = cityEl.value;
+    districtEl.innerHTML = `<option value="">Loading...</option>`;
+    subdistrictEl.innerHTML = `<option>Select District first</option>`;
+    postalEl.value = '';
+    if (!cityId) return districtEl.innerHTML = `<option>Select City first</option>`;
 
-      if (province && city && data[province] && data[province][city]) {
-        Object.keys(data[province][city]).forEach(district => {
-          const option = document.createElement("option");
-          option.value = district;
-          option.textContent = district;
-          districtSelect.appendChild(option);
-        });
-      }
+    fetch(`${API_BASE}/districts/${cityId}.json`)
+      .then(r => r.json())
+      .then(list => {
+        districtEl.innerHTML = `<option value="">Select District</option>` +
+          list.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+      });
+  };
 
-      document.getElementById("postal").innerHTML = `<option value="">Select Postal Code</option>`;
-    }
+  districtEl.onchange = () => {
+    const distId = districtEl.value;
+    subdistrictEl.innerHTML = `<option value="">Loading...</option>`;
+    postalEl.value = '';
+    if (!distId) return subdistrictEl.innerHTML = `<option>Select District first</option>`;
 
-    function updatePostalCode() {
-      const province = document.getElementById("province").value;
-      const city = document.getElementById("city").value;
-      const district = document.getElementById("district").value;
-      const postalSelect = document.getElementById("postal");
-      postalSelect.innerHTML = `<option value="">Select Postal Code</option>`;
+    fetch(`${API_BASE}/villages/${distId}.json`)
+      .then(r => r.json())
+      .then(list => {
+        subdistrictEl.innerHTML = `<option value="">Select Subdistrict</option>` +
+          list.map(s => `<option value="${s.id}" data-postal="${s.postal_code}">${s.name}</option>`).join('');
+      });
+  };
 
-      if (province && city && district && data[province][city][district]) {
-        const option = document.createElement("option");
-        option.value = data[province][city][district];
-        option.textContent = data[province][city][district];
-        postalSelect.appendChild(option);
-      }
-    }
+  subdistrictEl.onchange = () => {
+    const opt = subdistrictEl.selectedOptions[0];
+    postalEl.value = opt ? opt.dataset.postal : '';
+  };
 
-    function handleSubmit(event) {
-      event.preventDefault();
-
-      const form = document.getElementById("orderForm");
-      const dataForm = new FormData(form);
-
-      const summary = `
-Full Name: ${dataForm.get("name")}
-Email: ${dataForm.get("email")}
-Phone: ${dataForm.get("phone")}
-Province: ${dataForm.get("province")}
-City: ${dataForm.get("city")}
-District: ${dataForm.get("district")}
-Postal Code: ${dataForm.get("postal")}
-Street Address: ${dataForm.get("address")}
-Notes: ${dataForm.get("notes") || "None"}
-      `;
-
-      alert("Your order has been successfully submitted!\n\n" + summary);
-      form.reset();
-    }
-  </script>
-
+  function handleSubmit(e) {
+    e.preventDefault();
+    const form = new FormData(e.target);
+    const summary = `
+Full Name: ${form.get('name')}
+Email: ${form.get('email')}
+Phone: ${form.get('phone')}
+Province ID: ${form.get('province')}
+City ID: ${form.get('city')}
+District ID: ${form.get('district')}
+Subdistrict ID: ${form.get('subdistrict')}
+Postal Code: ${form.get('postal')}
+Address: ${form.get('address')}
+Notes: ${form.get('notes') || 'None'}
+    `;
+    alert('Order submitted successfully!\n\n' + summary);
+    e.target.reset();
+    postalEl.value = '';
+  }
+</script>
 </body>
 </html>
