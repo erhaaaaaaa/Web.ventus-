@@ -2,67 +2,130 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Order Summary</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Order Summary - Ventus</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 40px auto;
+      background: #222;
+      color: #fff;
+      padding: 20px;
+      border-radius: 12px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label, p {
+      margin-bottom: 8px;
+      display: block;
+    }
+    input[readonly] {
+      background: #444;
+      color: #eee;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+    #finalTotal {
+      background: #333;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    button {
+      background: #ffd700;
+      border: none;
+      padding: 14px 0;
+      width: 100%;
+      font-weight: bold;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      color: black;
+    }
+    button:hover {
+      background: #fff34d;
+    }
+  </style>
 </head>
 <body>
+  <h2>Order Summary</h2>
 
-<h1>Order Summary</h1>
-<div id="order-details"></div>
+  <label for="district">District</label>
+  <input type="text" id="district" readonly />
 
-<label for="district">Enter District:</label>
-<input type="text" id="district" placeholder="Example: Bogor" />
+  <label for="cartTotal">Total Price (Cart)</label>
+  <input type="text" id="cartTotal" readonly />
 
-<button id="calculateBtn">Calculate Total Payment</button>
+  <div id="finalTotal">
+    <!-- Ongkir + Total Bayar muncul di sini -->
+  </div>
 
-<div id="final-total"></div>
+  <button id="submitOrderBtn">Submit Order</button>
 
-<script>
-  const orderDetailsDiv = document.getElementById('order-details');
-  const finalTotalDiv = document.getElementById('final-total');
+  <script>
+    // Contoh ongkir per district (ubah sesuai data asli)
+    const ongkirData = {
+      "Bogor Barat": 15000,
+      "Bogor Timur": 18000,
+      "Bogor Selatan": 17000,
+      "Bogor Utara": 20000,
+      "Bogor Tengah": 16000
+      // tambah district lain jika perlu
+    };
 
-  // Load cart data from localStorage
-  const cartTotal = parseFloat(localStorage.getItem('cartTotal')) || 0;
-  const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    // Ambil data dari localStorage
+    const cartTotalRaw = localStorage.getItem('cartTotal');
+    const districtRaw = localStorage.getItem('district');
 
-  function renderOrder() {
-    if(cartItems.length === 0) {
-      orderDetailsDiv.textContent = "No items in cart.";
-      return;
+    // Parsing dan format rupiah sederhana
+    const cartTotal = cartTotalRaw ? Number(cartTotalRaw) : 0;
+    const district = districtRaw || "";
+
+    // Set value input
+    document.getElementById('district').value = district;
+    document.getElementById('cartTotal').value = formatRupiah(cartTotal);
+
+    // Hitung ongkir & total
+    function calculateTotalPayment() {
+      if(!district) {
+        document.getElementById('finalTotal').innerHTML = `<p style="color:#f55;">District not found!</p>`;
+        return;
+      }
+      const ongkir = ongkirData[district] || 25000; // default ongkir 25k jika ga ada di list
+      const grandTotal = cartTotal + ongkir;
+
+      document.getElementById('finalTotal').innerHTML = `
+        <p>Shipping Cost (Ongkir): Rp ${formatRupiah(ongkir)}</p>
+        <p>Total Payment: Rp ${formatRupiah(grandTotal)}</p>
+      `;
     }
-    let html = "<ul>";
-    cartItems.forEach(item => {
-      html += `<li>${item.name} — Rp ${item.price.toLocaleString()}</li>`;
+
+    // Format angka ke rupiah, misal 15000 -> 15,000
+    function formatRupiah(angka) {
+      return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    // Jalankan otomatis saat load
+    window.addEventListener('DOMContentLoaded', () => {
+      calculateTotalPayment();
     });
-    html += "</ul>";
-    html += `<p><strong>Subtotal: Rp ${cartTotal.toLocaleString()}</strong></p>`;
-    orderDetailsDiv.innerHTML = html;
-  }
 
-  // Example ongkir data by district (could be from API or static)
-  const ongkirData = {
-    "Bogor": 15000,
-    "Depok": 12000,
-    "Jakarta": 20000,
-    "Bandung": 18000
-  };
-
-  document.getElementById('calculateBtn').addEventListener('click', () => {
-    const district = document.getElementById('district').value.trim();
-    if(!district) {
-      alert("Please enter your district.");
-      return;
-    }
-    const ongkir = ongkirData[district] || 25000; // default ongkir jika tidak ada data
-    const grandTotal = cartTotal + ongkir;
-
-    finalTotalDiv.innerHTML = `
-      <p>Shipping Cost (Ongkir): Rp ${ongkir.toLocaleString()}</p>
-      <p><strong>Total Payment: Rp ${grandTotal.toLocaleString()}</strong></p>
-    `;
-  });
-
-  renderOrder();
-</script>
-
+    // Tombol submit order
+    document.getElementById('submitOrderBtn').addEventListener('click', () => {
+      alert('Order submitted! Terima kasih sudah berbelanja di Ventus.');
+      // Bisa ditambah submit ke server, redirect, dll sesuai kebutuhan
+      localStorage.clear(); // bersihkan data lokal kalau mau
+      window.location.href = "thankyou.html"; // misal redirect halaman terima kasih
+    });
+  </script>
 </body>
 </html>
