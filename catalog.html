@@ -6,7 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- FontAwesome CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
 
   <title>Catalog with Cart</title>
 
@@ -145,6 +150,7 @@
       user-select: none;
     }
 
+    /* Cart icon fixed right top */
     .cart-icon {
       position: fixed;
       top: 20px;
@@ -154,6 +160,7 @@
       cursor: pointer;
       z-index: 1100;
       user-select: none;
+      position: fixed;
     }
 
     .cart-badge {
@@ -169,6 +176,7 @@
       display: none;
     }
 
+    /* Cart sidebar */
     .cart-sidebar {
       position: fixed;
       top: 0;
@@ -234,6 +242,7 @@
       user-select: none;
     }
 
+    /* Close button */
     .cart-close {
       background: none;
       border: none;
@@ -249,30 +258,21 @@
       color: #fff;
     }
 
-    .total-section {
-      border-top: 1px solid #ffd700;
-      padding-top: 10px;
+    /* Proceed to Checkout button */
+    .proceed-btn {
       margin-top: auto;
-    }
-
-    .total-section h3 {
-      margin: 10px 0 5px;
-      font-size: 1.2rem;
-    }
-
-    .checkout-btn {
       background: #ffd700;
-      color: #000;
-      font-weight: bold;
+      color: #222;
+      font-weight: 700;
       border: none;
-      border-radius: 5px;
-      padding: 10px;
+      padding: 12px;
+      border-radius: 8px;
       cursor: pointer;
-      margin-top: 10px;
-      font-size: 1rem;
+      font-size: 1.1rem;
+      transition: background 0.3s ease;
     }
 
-    .checkout-btn:hover {
+    .proceed-btn:hover {
       background: #fff100;
     }
   </style>
@@ -286,7 +286,7 @@
   </nav>
 
   <h1>Catalog Page</h1>
-  <p class="description">This is the catalog page for Ventus products. Find the scent that defines you.</p>
+  <p class="description">Ini adalah halaman katalog produk Ventus. Temukan aroma yang menggambarkan dirimu.</p>
 
   <div class="catalog-items">
     <div class="item" data-id="1" data-name="Ventus Fell In Eden" data-price="75000" data-img="https://i.imgur.com/d0TLtWq.jpeg">
@@ -323,52 +323,53 @@
     </div>
   </div>
 
-  <div class="cart-icon" id="cartIcon">
+  <!-- Cart icon -->
+  <div class="cart-icon" id="cartIcon" title="Open Cart" aria-label="Cart" tabindex="0">
     <i class="fas fa-shopping-cart"></i>
     <div class="cart-badge" id="cartBadge">0</div>
   </div>
 
-  <aside class="cart-sidebar" id="cartSidebar">
-    <button class="cart-close" id="cartCloseBtn">&times;</button>
+  <!-- Cart sidebar -->
+  <aside class="cart-sidebar" id="cartSidebar" aria-hidden="true">
+    <button class="cart-close" id="cartCloseBtn" aria-label="Close Cart">&times;</button>
     <h2>Your Cart</h2>
-    <div id="cartItemsContainer"><p>Your cart is empty.</p></div>
-
-    <div class="total-section">
-      <h3>Total: <span id="cartTotal">IDR 0</span></h3>
-      <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+    <div id="cartItemsContainer">
+      <p>Your cart is empty.</p>
     </div>
+    <button class="proceed-btn" onclick="goToCheckout()" aria-label="Proceed to Checkout">Proceed to Checkout</button>
   </aside>
 
   <script>
+    // Increase count in product card + update cart
+    function increase(button) {
+      const span = button.parentElement.querySelector('span');
+      let count = parseInt(span.textContent);
+      count++;
+      span.textContent = count;
+      updateCart(button.closest('.item').dataset.id, button.closest('.item'));
+    }
+
+    // Decrease count in product card + update cart
+    function decrease(button) {
+      const span = button.parentElement.querySelector('span');
+      let count = parseInt(span.textContent);
+      if (count > 0) {
+        count--;
+        span.textContent = count;
+        updateCart(button.closest('.item').dataset.id, button.closest('.item'));
+      }
+    }
+
     const cartIcon = document.getElementById('cartIcon');
     const cartSidebar = document.getElementById('cartSidebar');
     const cartCloseBtn = document.getElementById('cartCloseBtn');
     const cartBadge = document.getElementById('cartBadge');
     const cartItemsContainer = document.getElementById('cartItemsContainer');
-    const cartTotal = document.getElementById('cartTotal');
 
+    // Cart data stored as id: {name, img, quantity, price}
     let cartData = {};
 
-    function increase(button) {
-      const itemElement = button.closest('.item');
-      const span = itemElement.querySelector('.counter span');
-      let count = parseInt(span.textContent);
-      count++;
-      span.textContent = count;
-      updateCart(itemElement.dataset.id, itemElement);
-    }
-
-    function decrease(button) {
-      const itemElement = button.closest('.item');
-      const span = itemElement.querySelector('.counter span');
-      let count = parseInt(span.textContent);
-      if (count > 0) {
-        count--;
-        span.textContent = count;
-        updateCart(itemElement.dataset.id, itemElement);
-      }
-    }
-
+    // Update cart data and UI
     function updateCart(id, itemElement) {
       const count = parseInt(itemElement.querySelector('.counter span').textContent);
 
@@ -384,68 +385,93 @@
       }
       updateCartBadge();
       renderCartItems();
+      saveCartToLocalStorage();
     }
 
+    // Update cart badge number
     function updateCartBadge() {
       const totalCount = Object.values(cartData).reduce((acc, item) => acc + item.quantity, 0);
-      cartBadge.style.display = totalCount > 0 ? 'block' : 'none';
       cartBadge.textContent = totalCount;
+      cartBadge.style.display = totalCount > 0 ? 'block' : 'none';
     }
 
-    function formatIDR(num) {
-      return 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
-
+    // Render cart items in sidebar
     function renderCartItems() {
-      cartItemsContainer.innerHTML = '';
-      const items = Object.values(cartData);
-      if (items.length === 0) {
+      if (Object.keys(cartData).length === 0) {
         cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
-        cartTotal.textContent = 'IDR 0';
         return;
       }
 
-      let total = 0;
-
-      items.forEach(item => {
+      cartItemsContainer.innerHTML = '';
+      Object.entries(cartData).forEach(([id, item]) => {
         const div = document.createElement('div');
-        div.className = 'cart-item';
-
-        const totalPrice = item.price * item.quantity;
-        total += totalPrice;
+        div.classList.add('cart-item');
 
         div.innerHTML = `
           <img src="${item.img}" alt="${item.name}" />
           <div class="cart-item-details">
             <h4>${item.name}</h4>
-            <span>Quantity: ${item.quantity}</span>
-            <span>Price: ${formatIDR(item.price)}</span>
-            <span>Total: ${formatIDR(totalPrice)}</span>
+            <span>Price: Rp ${item.price.toLocaleString()}</span>
+            <span>Qty: ${item.quantity}</span>
+            <span>Total: Rp ${(item.price * item.quantity).toLocaleString()}</span>
           </div>
         `;
-
         cartItemsContainer.appendChild(div);
       });
-
-      cartTotal.textContent = formatIDR(total);
     }
 
-    function toggleCart() {
-      cartSidebar.classList.toggle('open');
-    }
-
-    function checkout() {
-      alert('Thank you for your order! Proceeding to payment...');
-    }
-
-    cartIcon.addEventListener('click', toggleCart);
-    cartCloseBtn.addEventListener('click', toggleCart);
-
-    document.addEventListener('click', (e) => {
-      if (!cartSidebar.contains(e.target) && !cartIcon.contains(e.target) && cartSidebar.classList.contains('open')) {
-        toggleCart();
+    // Cart icon toggle
+    cartIcon.addEventListener('click', () => {
+      if (cartSidebar.classList.contains('open')) {
+        cartSidebar.classList.remove('open');
+        cartSidebar.setAttribute('aria-hidden', 'true');
+      } else {
+        cartSidebar.classList.add('open');
+        cartSidebar.setAttribute('aria-hidden', 'false');
       }
     });
+
+    // Close cart sidebar button
+    cartCloseBtn.addEventListener('click', () => {
+      cartSidebar.classList.remove('open');
+      cartSidebar.setAttribute('aria-hidden', 'true');
+    });
+
+    // Save cart data to localStorage
+    function saveCartToLocalStorage() {
+      localStorage.setItem('cartData', JSON.stringify(cartData));
+    }
+
+    // Load cart data from localStorage on page load
+    window.addEventListener('load', () => {
+      const savedCart = localStorage.getItem('cartData');
+      if (savedCart) {
+        cartData = JSON.parse(savedCart);
+
+        // Update counts on catalog items
+        Object.entries(cartData).forEach(([id, item]) => {
+          const itemElement = document.querySelector(`.item[data-id="${id}"]`);
+          if (itemElement) {
+            const span = itemElement.querySelector('.counter span');
+            span.textContent = item.quantity;
+          }
+        });
+
+        updateCartBadge();
+        renderCartItems();
+      }
+    });
+
+    // Proceed to checkout - redirect to checkout.html
+    function goToCheckout() {
+      if (Object.keys(cartData).length === 0) {
+        alert('Your cart is empty. Add items before proceeding to checkout.');
+        return;
+      }
+      // Save cart data again before redirecting
+      saveCartToLocalStorage();
+      window.location.href = 'checkout.html';
+    }
   </script>
 </body>
 </html>
