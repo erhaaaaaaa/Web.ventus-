@@ -435,7 +435,9 @@
     }
 
     function checkout() {
-      alert('Thank you for your order! Proceeding to payment...');
+  // Ganti alert dengan direct ke halaman checkout.html
+  window.location.href = 'checkout.html';
+}
     }
 
     cartIcon.addEventListener('click', toggleCart);
