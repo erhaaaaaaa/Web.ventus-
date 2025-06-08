@@ -110,6 +110,13 @@
       font-weight: normal;
     }
 
+    .price {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffd700;
+      margin: 5px 0 10px;
+    }
+
     .counter {
       margin-top: auto;
       margin-bottom: 0;
@@ -153,6 +160,7 @@
       cursor: pointer;
       z-index: 1100;
       user-select: none;
+      position: fixed;
     }
 
     .cart-badge {
@@ -225,6 +233,7 @@
     .cart-item-details span {
       font-size: 0.9rem;
       color: #ccc;
+      display: block;
     }
 
     .cart-item-quantity {
@@ -248,7 +257,6 @@
     .cart-close:hover {
       color: #fff;
     }
-
   </style>
 </head>
 <body>
@@ -263,10 +271,11 @@
   <p class="description">Ini adalah halaman katalog produk Ventus. Temukan aroma yang menggambarkan dirimu.</p>
 
   <div class="catalog-items">
-    <div class="item" data-id="1" data-name="Ventus Fell In Eden" data-price="100" data-img="https://i.imgur.com/d0TLtWq.jpeg">
+    <div class="item" data-id="1" data-name="Ventus Fell In Eden" data-price="75000" data-img="https://i.imgur.com/d0TLtWq.jpeg">
       <img src="https://i.imgur.com/d0TLtWq.jpeg" alt="Ventus Fell In Eden" />
       <h3>Ventus Fell In Eden</h3>
       <p>A timeless scent that speaks of power, elegance, and wind.</p>
+      <p class="price">IDR 75.000</p>
       <div class="counter">
         <button onclick="decrease(this)">-</button>
         <span>0</span>
@@ -274,10 +283,11 @@
       </div>
     </div>
 
-    <div class="item" data-id="2" data-name="Ventus Breathe by Divine" data-price="90" data-img="https://i.imgur.com/RtSmtYL.jpeg">
+    <div class="item" data-id="2" data-name="Ventus Breathe by Divine" data-price="75000" data-img="https://i.imgur.com/RtSmtYL.jpeg">
       <img src="https://i.imgur.com/RtSmtYL.jpeg" alt="Ventus Breathe by Divine" />
       <h3>Ventus Breathe by Divine</h3>
       <p>Fresh, airy, and soul-touching — for moments that linger.</p>
+      <p class="price">IDR 75.000</p>
       <div class="counter">
         <button onclick="decrease(this)">-</button>
         <span>0</span>
@@ -285,10 +295,11 @@
       </div>
     </div>
 
-    <div class="item" data-id="3" data-name="Ventus House of Manna" data-price="110" data-img="https://i.imgur.com/a1VptEV.jpeg">
+    <div class="item" data-id="3" data-name="Ventus House of Manna" data-price="75000" data-img="https://i.imgur.com/a1VptEV.jpeg">
       <img src="https://i.imgur.com/a1VptEV.jpeg" alt="Ventus House of Manna" />
       <h3>Ventus House of Manna</h3>
       <p>A divine scent that blends warmth and clarity in harmony.</p>
+      <p class="price">IDR 75.000</p>
       <div class="counter">
         <button onclick="decrease(this)">-</button>
         <span>0</span>
@@ -339,7 +350,7 @@
     const cartBadge = document.getElementById('cartBadge');
     const cartItemsContainer = document.getElementById('cartItemsContainer');
 
-    // Cart data stored as id: quantity
+    // Cart data stored as id: {name, img, quantity, price}
     let cartData = {};
 
     // Update cart data and UI
@@ -351,7 +362,7 @@
           name: itemElement.dataset.name,
           img: itemElement.dataset.img,
           quantity: count,
-          price: itemElement.dataset.price
+          price: parseInt(itemElement.dataset.price)
         };
       } else {
         delete cartData[id];
@@ -371,6 +382,11 @@
       }
     }
 
+    // Format number as IDR currency with dot separator
+    function formatIDR(num) {
+      return 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
     // Render cart items inside sidebar
     function renderCartItems() {
       cartItemsContainer.innerHTML = '';
@@ -383,12 +399,15 @@
         const div = document.createElement('div');
         div.className = 'cart-item';
 
+        const totalPrice = item.price * item.quantity;
+
         div.innerHTML = `
           <img src="${item.img}" alt="${item.name}" />
           <div class="cart-item-details">
             <h4>${item.name}</h4>
-            <span>Quantity: ${item.quantity}</span><br/>
-            <span>Price per item: $${item.price}</span>
+            <span>Quantity: ${item.quantity}</span>
+            <span>Price per item: ${formatIDR(item.price)}</span>
+            <span>Total: ${formatIDR(totalPrice)}</span>
           </div>
           <div class="cart-item-quantity">${item.quantity}</div>
         `;
