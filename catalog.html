@@ -272,12 +272,7 @@
       font-size: 1rem;
     }
 
-    .checkout-btn:disabled {
-      background: gray;
-      cursor: not-allowed;
-    }
-
-    .checkout-btn:hover:not(:disabled) {
+    .checkout-btn:hover {
       background: #fff100;
     }
   </style>
@@ -297,184 +292,160 @@
     <div class="item" data-id="1" data-name="Ventus Fell In Eden" data-price="75000" data-img="https://i.imgur.com/d0TLtWq.jpeg">
       <img src="https://i.imgur.com/d0TLtWq.jpeg" alt="Ventus Fell In Eden" />
       <h3>Ventus Fell In Eden</h3>
-      <p>A timeless scent with fresh floral notes.</p>
-      <div class="price">IDR 75,000</div>
+      <p>A timeless scent that speaks of power, elegance, and wind.</p>
       <div class="counter">
-        <button class="decrement">-</button>
-        <span class="quantity">0</span>
-        <button class="increment">+</button>
+        <button onclick="decrease(this)">-</button>
+        <span>0</span>
+        <button onclick="increase(this)">+</button>
       </div>
     </div>
 
-    
     <div class="item" data-id="2" data-name="Ventus Breathe by Divine" data-price="75000" data-img="https://i.imgur.com/RtSmtYL.jpeg">
       <img src="https://i.imgur.com/RtSmtYL.jpeg" alt="Ventus Breathe by Divine" />
       <h3>Ventus Breathe by Divine</h3>
       <p>Fresh, airy, and soul-touching — for moments that linger.</p>
       <div class="counter">
-        <<button class="decrement">-</button>
-        <span class="quantity">0</span>
-        <button class="increment">+</button>
+        <button onclick="decrease(this)">-</button>
+        <span>0</span>
+        <button onclick="increase(this)">+</button>
       </div>
     </div>
-
 
     <div class="item" data-id="3" data-name="Ventus House of Manna" data-price="75000" data-img="https://i.imgur.com/a1VptEV.jpeg">
       <img src="https://i.imgur.com/a1VptEV.jpeg" alt="Ventus House of Manna" />
       <h3>Ventus House of Manna</h3>
       <p>A divine scent that blends warmth and clarity in harmony.</p>
       <div class="counter">
-        <button class="decrement">-</button>
-        <span class="quantity">0</span>
-        <button class="increment">+</button>
+        <button onclick="decrease(this)">-</button>
+        <span>0</span>
+        <button onclick="increase(this)">+</button>
       </div>
     </div>
   </div>
 
-  <!-- Cart icon -->
   <div class="cart-icon" id="cartIcon">
     <i class="fas fa-shopping-cart"></i>
     <div class="cart-badge" id="cartBadge">0</div>
   </div>
 
-  <!-- Cart sidebar -->
   <aside class="cart-sidebar" id="cartSidebar">
-    <button class="cart-close" id="closeCart">&times;</button>
+    <button class="cart-close" id="cartCloseBtn">&times;</button>
     <h2>Your Cart</h2>
-    <div id="cartItemsContainer"></div>
+    <div id="cartItemsContainer"><p>Your cart is empty.</p></div>
+
     <div class="total-section">
       <h3>Total: <span id="cartTotal">IDR 0</span></h3>
-      <button id="checkoutBtn" class="checkout-btn" disabled>Checkout</button>
+      <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
     </div>
   </aside>
 
-<script>
-  const catalogItems = document.querySelectorAll('.item');
-  const cartIcon = document.getElementById('cartIcon');
-  const cartSidebar = document.getElementById('cartSidebar');
-  const closeCartBtn = document.getElementById('closeCart');
-  const cartItemsContainer = document.getElementById('cartItemsContainer');
-  const cartBadge = document.getElementById('cartBadge');
-  const cartTotal = document.getElementById('cartTotal');
-  const checkoutBtn = document.getElementById('checkoutBtn');
+  <script>
+    const cartIcon = document.getElementById('cartIcon');
+    const cartSidebar = document.getElementById('cartSidebar');
+    const cartCloseBtn = document.getElementById('cartCloseBtn');
+    const cartBadge = document.getElementById('cartBadge');
+    const cartItemsContainer = document.getElementById('cartItemsContainer');
+    const cartTotal = document.getElementById('cartTotal');
 
-  // Cart data object { id: { id, name, price, img, quantity } }
-  let cartData = {};
+    let cartData = {};
 
-  // Format price IDR
-  function formatIDR(num) {
-    return 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  }
-
-  // Update cart badge count
-  function updateCartBadge() {
-    let count = 0;
-    for (const item of Object.values(cartData)) {
-      count += item.quantity;
-    }
-    cartBadge.textContent = count;
-    cartBadge.style.display = count > 0 ? 'block' : 'none';
-
-    // Enable or disable checkout button based on cart count
-    checkoutBtn.disabled = count === 0;
-  }
-
-  // Render cart items in sidebar
-  function renderCart() {
-    cartItemsContainer.innerHTML = '';
-    let total = 0;
-
-    if (Object.keys(cartData).length === 0) {
-      cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
-      cartTotal.textContent = formatIDR(0);
-      return;
+    function increase(button) {
+      const itemElement = button.closest('.item');
+      const span = itemElement.querySelector('.counter span');
+      let count = parseInt(span.textContent);
+      count++;
+      span.textContent = count;
+      updateCart(itemElement.dataset.id, itemElement);
     }
 
-    Object.values(cartData).forEach(item => {
-      const div = document.createElement('div');
-      div.className = 'cart-item';
-
-      const totalPrice = item.price * item.quantity;
-      total += totalPrice;
-
-      div.innerHTML = `
-        <img src="${item.img}" alt="${item.name}" />
-        <div class="cart-item-details">
-          <h4>${item.name}</h4>
-          <span>Quantity: ${item.quantity}</span>
-          <span>Price: ${formatIDR(item.price)}</span>
-          <span>Total: ${formatIDR(totalPrice)}</span>
-        </div>
-      `;
-
-      cartItemsContainer.appendChild(div);
-    });
-
-    cartTotal.textContent = formatIDR(total);
-  }
-
-  // Update cart item quantity UI in catalog
-  function updateCatalogQuantityUI() {
-    catalogItems.forEach(itemElem => {
-      const id = itemElem.getAttribute('data-id');
-      const qtySpan = itemElem.querySelector('.quantity');
-      qtySpan.textContent = cartData[id]?.quantity || 0;
-    });
-  }
-
-  // Add event listeners for increment/decrement buttons
-  catalogItems.forEach(itemElem => {
-    const id = itemElem.getAttribute('data-id');
-    const name = itemElem.getAttribute('data-name');
-    const price = parseInt(itemElem.getAttribute('data-price'), 10);
-    const img = itemElem.getAttribute('data-img');
-
-    const incrementBtn = itemElem.querySelector('.increment');
-    const decrementBtn = itemElem.querySelector('.decrement');
-
-    incrementBtn.addEventListener('click', () => {
-      if (!cartData[id]) {
-        cartData[id] = { id, name, price, img, quantity: 0 };
+    function decrease(button) {
+      const itemElement = button.closest('.item');
+      const span = itemElement.querySelector('.counter span');
+      let count = parseInt(span.textContent);
+      if (count > 0) {
+        count--;
+        span.textContent = count;
+        updateCart(itemElement.dataset.id, itemElement);
       }
-      cartData[id].quantity++;
-      updateCatalogQuantityUI();
-      updateCartBadge();
-      renderCart();
-    });
+    }
 
-    decrementBtn.addEventListener('click', () => {
-      if (!cartData[id]) return;
-      cartData[id].quantity--;
-      if (cartData[id].quantity <= 0) {
+    function updateCart(id, itemElement) {
+      const count = parseInt(itemElement.querySelector('.counter span').textContent);
+
+      if (count > 0) {
+        cartData[id] = {
+          name: itemElement.dataset.name,
+          img: itemElement.dataset.img,
+          quantity: count,
+          price: parseInt(itemElement.dataset.price)
+        };
+      } else {
         delete cartData[id];
       }
-      updateCatalogQuantityUI();
       updateCartBadge();
-      renderCart();
+      renderCartItems();
+    }
+
+    function updateCartBadge() {
+      const totalCount = Object.values(cartData).reduce((acc, item) => acc + item.quantity, 0);
+      cartBadge.style.display = totalCount > 0 ? 'block' : 'none';
+      cartBadge.textContent = totalCount;
+    }
+
+    function formatIDR(num) {
+      return 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function renderCartItems() {
+      cartItemsContainer.innerHTML = '';
+      const items = Object.values(cartData);
+      if (items.length === 0) {
+        cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
+        cartTotal.textContent = 'IDR 0';
+        return;
+      }
+
+      let total = 0;
+
+      items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+
+        const totalPrice = item.price * item.quantity;
+        total += totalPrice;
+
+        div.innerHTML = `
+          <img src="${item.img}" alt="${item.name}" />
+          <div class="cart-item-details">
+            <h4>${item.name}</h4>
+            <span>Quantity: ${item.quantity}</span>
+            <span>Price: ${formatIDR(item.price)}</span>
+            <span>Total: ${formatIDR(totalPrice)}</span>
+          </div>
+        `;
+
+        cartItemsContainer.appendChild(div);
+      });
+
+      cartTotal.textContent = formatIDR(total);
+    }
+
+    function toggleCart() {
+      cartSidebar.classList.toggle('open');
+    }
+
+    function checkout() {
+      alert('Thank you for your order! Proceeding to payment...');
+    }
+
+    cartIcon.addEventListener('click', toggleCart);
+    cartCloseBtn.addEventListener('click', toggleCart);
+
+    document.addEventListener('click', (e) => {
+      if (!cartSidebar.contains(e.target) && !cartIcon.contains(e.target) && cartSidebar.classList.contains('open')) {
+        toggleCart();
+      }
     });
-  });
-
-  // Show cart sidebar
-  cartIcon.addEventListener('click', () => {
-    cartSidebar.classList.add('open');
-  });
-
-  // Close cart sidebar
-  closeCartBtn.addEventListener('click', () => {
-    cartSidebar.classList.remove('open');
-  });
-
-  // Checkout button click handler: save to localStorage & redirect
-  checkoutBtn.addEventListener('click', () => {
-    localStorage.setItem('cartData', JSON.stringify(cartData));
-    window.location.href = 'checkout.html';
-  });
-
-  // Initial UI update
-  updateCatalogQuantityUI();
-  updateCartBadge();
-  renderCart();
-</script>
-
+  </script>
 </body>
 </html>
