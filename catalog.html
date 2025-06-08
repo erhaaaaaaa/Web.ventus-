@@ -2,183 +2,302 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  />
-  <title>Catalog with Cart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ventus Cart</title>
   <style>
-    /* All your existing CSS here */
-    /* (same as before, omitted for brevity) */
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    .product-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 20px;
+      justify-content: center;
+    }
+
+    .item {
+      background: #222;
+      padding: 15px;
+      border-radius: 10px;
+      width: 200px;
+      text-align: center;
+      box-shadow: 0 0 5px #333;
+      position: relative;
+    }
+
+    .item img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .item h3 {
+      margin: 10px 0 5px;
+    }
+
+    .counter {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
+      gap: 10px;
+    }
+
+    .counter button {
+      background: #ffd700;
+      color: black;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+    }
+
+    .cart-icon {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #ffd700;
+      border-radius: 50%;
+      padding: 15px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+
+    .cart-icon span {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: red;
+      color: white;
+      font-size: 12px;
+      padding: 3px 6px;
+      border-radius: 50%;
+      display: none;
+    }
+
+    .cart-sidebar {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 300px;
+      height: 100%;
+      background: #1a1a1a;
+      transition: right 0.3s ease;
+      padding: 20px;
+      z-index: 999;
+      overflow-y: auto;
+    }
+
+    .cart-sidebar.open {
+      right: 0;
+    }
+
+    .cart-sidebar h2 {
+      margin-top: 0;
+    }
+
+    .cart-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
+    }
+
+    .cart-item img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+
+    .cart-item-details {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.9rem;
+    }
+
+    #cartCloseBtn {
+      background: none;
+      color: white;
+      border: none;
+      font-size: 1.2rem;
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <nav>
-    <a href="index.html"><i class="fas fa-house"></i> Home</a>
-    <a href="catalog.html"><i class="fas fa-box-open"></i> Catalog</a>
-    <a href="about.html"><i class="fas fa-info-circle"></i> About</a>
-  </nav>
 
-  <h1>Catalog Page</h1>
-  <p class="description">Ini adalah halaman katalog produk Ventus. Temukan aroma yang menggambarkan dirimu.</p>
+<div class="cart-icon" id="cartIcon">
+  🛒
+  <span id="cartBadge">0</span>
+</div>
 
-  <div class="catalog-items">
-    <div class="item" data-id="1" data-name="Ventus Fell In Eden" data-price="75000" data-img="https://i.imgur.com/d0TLtWq.jpeg">
-      <img src="https://i.imgur.com/d0TLtWq.jpeg" alt="Ventus Fell In Eden" />
-      <h3>Ventus Fell In Eden</h3>
-      <p>A timeless scent that speaks of power, elegance, and wind.</p>
-      <div class="counter">
-        <button onclick="decrease(this)">-</button>
-        <span>0</span>
-        <button onclick="increase(this)">+</button>
-      </div>
-    </div>
-    <div class="item" data-id="2" data-name="Ventus Breathe by Divine" data-price="75000" data-img="https://i.imgur.com/RtSmtYL.jpeg">
-      <img src="https://i.imgur.com/RtSmtYL.jpeg" alt="Ventus Breathe by Divine" />
-      <h3>Ventus Breathe by Divine</h3>
-      <p>Fresh, airy, and soul-touching — for moments that linger.</p>
-      <div class="counter">
-        <button onclick="decrease(this)">-</button>
-        <span>0</span>
-        <button onclick="increase(this)">+</button>
-      </div>
-    </div>
-    <div class="item" data-id="3" data-name="Ventus House of Manna" data-price="75000" data-img="https://i.imgur.com/a1VptEV.jpeg">
-      <img src="https://i.imgur.com/a1VptEV.jpeg" alt="Ventus House of Manna" />
-      <h3>Ventus House of Manna</h3>
-      <p>A divine scent that blends warmth and clarity in harmony.</p>
-      <div class="counter">
-        <button onclick="decrease(this)">-</button>
-        <span>0</span>
-        <button onclick="increase(this)">+</button>
-      </div>
+<div class="cart-sidebar" id="cartSidebar" aria-hidden="true">
+  <button id="cartCloseBtn">✖</button>
+  <h2>Your Cart</h2>
+  <div id="cartItemsContainer"></div>
+</div>
+
+<div class="product-container">
+  <div class="item" data-id="1" data-name="Ventus Classic" data-img="https://via.placeholder.com/150" data-price="150000">
+    <img src="https://via.placeholder.com/150" alt="Ventus Classic"/>
+    <h3>Ventus Classic</h3>
+    <p>IDR 150.000</p>
+    <div class="counter">
+      <button onclick="decrease(this)">−</button>
+      <span>0</span>
+      <button onclick="increase(this)">+</button>
     </div>
   </div>
 
-  <div class="cart-icon" id="cartIcon" title="Open Cart" aria-label="Cart" tabindex="0">
-    <i class="fas fa-shopping-cart"></i>
-    <div class="cart-badge" id="cartBadge">0</div>
+  <div class="item" data-id="2" data-name="Ventus Gold" data-img="https://via.placeholder.com/150/ffd700" data-price="200000">
+    <img src="https://via.placeholder.com/150/ffd700" alt="Ventus Gold"/>
+    <h3>Ventus Gold</h3>
+    <p>IDR 200.000</p>
+    <div class="counter">
+      <button onclick="decrease(this)">−</button>
+      <span>0</span>
+      <button onclick="increase(this)">+</button>
+    </div>
   </div>
+</div>
 
-  <aside class="cart-sidebar" id="cartSidebar" aria-hidden="true">
-    <button class="cart-close" id="cartCloseBtn" aria-label="Close Cart">&times;</button>
-    <h2>Your Cart</h2>
-    <div id="cartItemsContainer">
-      <p>Your cart is empty.</p>
-    </div>
-    <div id="cartTotalContainer" style="margin-top: auto; border-top: 1px solid #ffd700; padding-top: 15px;">
-      <h3 style="margin-bottom: 10px;">Total: <span id="cartTotalAmount">IDR 0</span></h3>
-      <button style="width: 100%; padding: 12px; background: #ffd700; color: #000; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.3s;" onclick="checkout()">Proceed to Checkout</button>
-    </div>
-  </aside>
+<script>
+  function increase(button) {
+    const span = button.parentElement.querySelector('span');
+    let count = parseInt(span.textContent);
+    count++;
+    span.textContent = count;
+    updateCart(button.closest('.item').dataset.id, button.closest('.item'));
+  }
 
-  <script>
-    function increase(button) {
-      const span = button.parentElement.querySelector('span');
-      let count = parseInt(span.textContent);
-      count++;
+  function decrease(button) {
+    const span = button.parentElement.querySelector('span');
+    let count = parseInt(span.textContent);
+    if (count > 0) {
+      count--;
       span.textContent = count;
       updateCart(button.closest('.item').dataset.id, button.closest('.item'));
     }
+  }
 
-    function decrease(button) {
-      const span = button.parentElement.querySelector('span');
-      let count = parseInt(span.textContent);
-      if (count > 0) {
-        count--;
-        span.textContent = count;
-        updateCart(button.closest('.item').dataset.id, button.closest('.item'));
-      }
+  const cartIcon = document.getElementById('cartIcon');
+  const cartSidebar = document.getElementById('cartSidebar');
+  const cartCloseBtn = document.getElementById('cartCloseBtn');
+  const cartBadge = document.getElementById('cartBadge');
+  const cartItemsContainer = document.getElementById('cartItemsContainer');
+
+  let cartData = {};
+
+  function updateCart(id, itemElement) {
+    const count = parseInt(itemElement.querySelector('.counter span').textContent);
+
+    if (count > 0) {
+      cartData[id] = {
+        name: itemElement.dataset.name,
+        img: itemElement.dataset.img,
+        quantity: count,
+        price: parseInt(itemElement.dataset.price)
+      };
+    } else {
+      delete cartData[id];
     }
 
-    const cartIcon = document.getElementById('cartIcon');
-    const cartSidebar = document.getElementById('cartSidebar');
-    const cartCloseBtn = document.getElementById('cartCloseBtn');
-    const cartBadge = document.getElementById('cartBadge');
-    const cartItemsContainer = document.getElementById('cartItemsContainer');
+    updateCartBadge();
+    renderCartItems();
+  }
 
-    let cartData = {};
-
-    function updateCart(id, itemElement) {
-      const count = parseInt(itemElement.querySelector('.counter span').textContent);
-      if (count > 0) {
-        cartData[id] = {
-          name: itemElement.dataset.name,
-          img: itemElement.dataset.img,
-          quantity: count,
-          price: parseInt(itemElement.dataset.price)
-        };
-      } else {
-        delete cartData[id];
-      }
-      updateCartBadge();
-      renderCartItems();
-    }
-
-    function updateCartBadge() {
-      const totalCount = Object.values(cartData).reduce((acc, item) => acc + item.quantity, 0);
-      cartBadge.style.display = totalCount > 0 ? 'block' : 'none';
+  function updateCartBadge() {
+    const totalCount = Object.values(cartData).reduce((acc, item) => acc + item.quantity, 0);
+    if (totalCount > 0) {
+      cartBadge.style.display = 'inline';
       cartBadge.textContent = totalCount;
+    } else {
+      cartBadge.style.display = 'none';
+    }
+  }
+
+  function formatIDR(num) {
+    return 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+  function renderCartItems() {
+    cartItemsContainer.innerHTML = '';
+    const items = Object.values(cartData);
+
+    if (items.length === 0) {
+      cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
+      return;
     }
 
-    function formatIDR(num) {
-      return 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
+    let totalPriceAll = 0;
 
-    function updateCartTotal() {
-      const total = Object.values(cartData).reduce((acc, item) => acc + item.price * item.quantity, 0);
-      document.getElementById('cartTotalAmount').textContent = formatIDR(total);
-    }
+    items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'cart-item';
+      const totalPrice = item.price * item.quantity;
+      totalPriceAll += totalPrice;
 
-    function renderCartItems() {
-      cartItemsContainer.innerHTML = '';
-      const items = Object.values(cartData);
-      if (items.length === 0) {
-        cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
-        updateCartTotal();
-        return;
-      }
-      items.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'cart-item';
-        const totalPrice = item.price * item.quantity;
-        div.innerHTML = `
-          <img src="${item.img}" alt="${item.name}" />
-          <div class="cart-item-details">
-            <h4>${item.name}</h4>
-            <span>Quantity: ${item.quantity}</span>
-            <span>Price per item: ${formatIDR(item.price)}</span>
-            <span>Total: ${formatIDR(totalPrice)}</span>
-          </div>
-          <div class="cart-item-quantity">${item.quantity}</div>
-        `;
-        cartItemsContainer.appendChild(div);
-      });
-      updateCartTotal();
-    }
-
-    function toggleCart() {
-      const isOpen = cartSidebar.classList.contains('open');
-      cartSidebar.classList.toggle('open');
-      cartSidebar.setAttribute('aria-hidden', isOpen ? 'true' : 'false');
-    }
-
-    function checkout() {
-      alert("Thank you for your purchase! Your order is being processed.");
-    }
-
-    cartIcon.addEventListener('click', toggleCart);
-    cartCloseBtn.addEventListener('click', toggleCart);
-
-    document.addEventListener('click', (e) => {
-      if (!cartSidebar.contains(e.target) && !cartIcon.contains(e.target) && cartSidebar.classList.contains('open')) {
-        toggleCart();
-      }
+      div.innerHTML = `
+        <img src="${item.img}" alt="${item.name}" />
+        <div class="cart-item-details">
+          <h4>${item.name}</h4>
+          <span>Quantity: ${item.quantity}</span>
+          <span>Price per item: ${formatIDR(item.price)}</span>
+          <span>Total: ${formatIDR(totalPrice)}</span>
+        </div>
+      `;
+      cartItemsContainer.appendChild(div);
     });
-  </script>
+
+    const summary = document.createElement('div');
+    summary.style.marginTop = '20px';
+    summary.innerHTML = `
+      <hr style="margin: 15px 0; border: 1px solid #444;" />
+      <p style="font-size: 1.1rem;"><strong>Total: ${formatIDR(totalPriceAll)}</strong></p>
+      <button onclick="checkout()" style="padding: 10px 20px; background: #ffd700; color: black; font-weight: bold; border: none; border-radius: 5px; cursor: pointer;">Proceed to Checkout</button>
+    `;
+    cartItemsContainer.appendChild(summary);
+  }
+
+  function checkout() {
+    alert("Thank you for your order! This is a demo checkout.");
+  }
+
+  function toggleCart() {
+    const isOpen = cartSidebar.classList.contains('open');
+    if (isOpen) {
+      cartSidebar.classList.remove('open');
+      cartSidebar.setAttribute('aria-hidden', 'true');
+    } else {
+      cartSidebar.classList.add('open');
+      cartSidebar.setAttribute('aria-hidden', 'false');
+    }
+  }
+
+  cartIcon.addEventListener('click', toggleCart);
+  cartCloseBtn.addEventListener('click', toggleCart);
+
+  document.addEventListener('click', (e) => {
+    if (
+      !cartSidebar.contains(e.target) &&
+      !cartIcon.contains(e.target) &&
+      cartSidebar.classList.contains('open')
+    ) {
+      toggleCart();
+    }
+  });
+</script>
 </body>
 </html>
