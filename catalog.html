@@ -1,213 +1,451 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Catalog Produk</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0; padding: 0;
-    background: #f0f0f0;
-  }
-  header {
-    background-color: #222;
-    color: white;
-    padding: 15px 30px;
-    text-align: center;
-  }
-  main {
-    max-width: 960px;
-    margin: 30px auto;
-    background: white;
-    padding: 20px 30px;
-    border-radius: 8px;
-  }
-  h1 {
-    margin-bottom: 20px;
-  }
-  .products {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  .product {
-    background: #fafafa;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 15px;
-    width: calc(33.333% - 13.33px);
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  .product img {
-    max-width: 100%;
-    border-radius: 6px;
-    margin-bottom: 10px;
-  }
-  .product h3 {
-    margin: 0 0 10px 0;
-    font-size: 1.1rem;
-  }
-  .product p {
-    flex-grow: 1;
-    font-size: 0.95rem;
-    margin-bottom: 12px;
-  }
-  .product .price {
-    font-weight: 700;
-    margin-bottom: 12px;
-  }
-  .product button {
-    background-color: #ffd700;
-    border: none;
-    border-radius: 6px;
-    padding: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  .product button:hover {
-    background-color: #e6c200;
-  }
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  .cart-info {
-    margin-top: 25px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    text-align: right;
-  }
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  .checkout-btn {
-    margin-top: 20px;
-    background-color: #222;
-    color: white;
-    border: none;
-    padding: 14px 28px;
-    font-size: 1rem;
-    font-weight: 700;
-    border-radius: 8px;
-    cursor: pointer;
-    float: right;
-  }
-  .checkout-btn:hover {
-    background-color: #444;
-  }
+  <title>Catalog with Cart</title>
 
-  @media (max-width: 720px) {
-    .product {
-      width: calc(50% - 10px);
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      background-image: url('https://i.imgur.com/w2Ihyed.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
-  }
-  @media (max-width: 480px) {
-    .product {
+
+    nav {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 15px 30px;
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #ffd700;
+    }
+
+    h1 {
+      margin: 40px 30px 20px;
+      font-size: 2.8rem;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+    }
+
+    p.description {
+      margin: 0 30px 40px;
+      font-size: 1.2rem;
+      max-width: 600px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+    }
+
+    .catalog-items {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      padding: 0 30px 50px;
+      flex-grow: 1;
+    }
+
+    .item {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      transition: background 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .item:hover {
+      background: rgba(255, 215, 0, 0.2);
+      color: #fff;
+    }
+
+    .item img {
       width: 100%;
+      max-width: 200px;
+      border-radius: 8px;
+      margin-bottom: 10px;
     }
+
+    .item h3 {
+      margin: 10px 0 5px;
+    }
+
+    .item p {
+      font-size: 0.9rem;
+      color: #eee;
+      font-weight: normal;
+    }
+
+    .price {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffd700;
+      margin: 5px 0 10px;
+    }
+
+    .counter {
+      margin-top: auto;
+      margin-bottom: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+    }
+
+    .counter button {
+      background: #ffd700;
+      border: none;
+      color: #222;
+      font-size: 1rem;
+      padding: 5px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .counter button:hover {
+      background: #fff100;
+    }
+
+    .counter span {
+      font-size: 1.2rem;
+      min-width: 25px;
+      text-align: center;
+      display: inline-block;
+      user-select: none;
+    }
+
+    .cart-icon {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 2.5rem;
+      color: #ffd700;
+      cursor: pointer;
+      z-index: 1100;
+      user-select: none;
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: red;
+      color: white;
+      font-weight: 700;
+      border-radius: 50%;
+      padding: 2px 7px;
+      font-size: 0.8rem;
+      display: none;
+    }
+
+    .cart-sidebar {
+      position: fixed;
+      top: 0;
+      right: -350px;
+      width: 350px;
+      height: 100vh;
+      background: rgba(0,0,0,0.95);
+      color: white;
+      box-shadow: -3px 0 10px rgba(0,0,0,0.7);
+      padding: 20px;
+      box-sizing: border-box;
+      transition: right 0.4s ease;
+      z-index: 1050;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cart-sidebar.open {
+      right: 0;
+    }
+
+    .cart-sidebar h2 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #ffd700;
+      padding-bottom: 8px;
+    }
+
+    .cart-item {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      align-items: center;
+    }
+
+    .cart-item img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
+    .cart-item-details {
+      flex-grow: 1;
+    }
+
+    .cart-item-details h4 {
+      margin: 0 0 5px;
+      font-size: 1rem;
+    }
+
+    .cart-item-details span {
+      font-size: 0.9rem;
+      color: #ccc;
+      display: block;
+    }
+
+    .cart-item-quantity {
+      font-weight: 700;
+      font-size: 1.1rem;
+      user-select: none;
+    }
+
+    .cart-close {
+      background: none;
+      border: none;
+      color: #ffd700;
+      font-size: 1.8rem;
+      cursor: pointer;
+      align-self: flex-end;
+      margin-bottom: 15px;
+      transition: color 0.2s;
+    }
+
+    .cart-close:hover {
+      color: #fff;
+    }
+
+    .total-section {
+      border-top: 1px solid #ffd700;
+      padding-top: 10px;
+      margin-top: auto;
+    }
+
+    .total-section h3 {
+      margin: 10px 0 5px;
+      font-size: 1.2rem;
+    }
+
     .checkout-btn {
-      width: 100%;
-      float: none;
-      margin-top: 30px;
+      background: #ffd700;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      padding: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 1rem;
     }
-  }
-</style>
+
+    .checkout-btn:hover {
+      background: #fff100;
+    }
+  </style>
 </head>
 <body>
 
-<header>
-  <h1>Catalog Produk</h1>
-</header>
+  <nav>
+    <a href="index.html"><i class="fas fa-house"></i> Home</a>
+    <a href="catalog.html"><i class="fas fa-box-open"></i> Catalog</a>
+    <a href="about.html"><i class="fas fa-info-circle"></i> About</a>
+  </nav>
 
-<main>
-  <section class="products" aria-label="Daftar produk">
-    <!-- Contoh produk -->
-    <article class="product" data-id="1">
-      <img src="https://via.placeholder.com/250x150?text=Produk+1" alt="Produk 1" />
-      <h3>Produk 1</h3>
-      <p>Deskripsi singkat produk 1.</p>
-      <div class="price">Rp 100.000</div>
-      <button class="add-to-cart-btn" type="button">Tambah ke Keranjang</button>
-    </article>
+  <h1>Catalog Page</h1>
+  <p class="description">This is the catalog page for Ventus products. Find the scent that defines you.</p>
 
-    <article class="product" data-id="2">
-      <img src="https://via.placeholder.com/250x150?text=Produk+2" alt="Produk 2" />
-      <h3>Produk 2</h3>
-      <p>Deskripsi singkat produk 2.</p>
-      <div class="price">Rp 150.000</div>
-      <button class="add-to-cart-btn" type="button">Tambah ke Keranjang</button>
-    </article>
+  <div class="catalog-items">
+    <div class="item" data-id="1" data-name="Ventus Fell In Eden" data-price="75000" data-img="https://i.imgur.com/d0TLtWq.jpeg">
+      <img src="https://i.imgur.com/d0TLtWq.jpeg" alt="Ventus Fell In Eden" />
+      <h3>Ventus Fell In Eden</h3>
+      <p>A timeless scent that speaks of power, elegance, and wind.</p>
+      <div class="counter">
+        <button onclick="decrease(this)">-</button>
+        <span>0</span>
+        <button onclick="increase(this)">+</button>
+      </div>
+    </div>
 
-    <article class="product" data-id="3">
-      <img src="https://via.placeholder.com/250x150?text=Produk+3" alt="Produk 3" />
-      <h3>Produk 3</h3>
-      <p>Deskripsi singkat produk 3.</p>
-      <div class="price">Rp 200.000</div>
-      <button class="add-to-cart-btn" type="button">Tambah ke Keranjang</button>
-    </article>
-  </section>
+    <div class="item" data-id="2" data-name="Ventus Breathe by Divine" data-price="75000" data-img="https://i.imgur.com/RtSmtYL.jpeg">
+      <img src="https://i.imgur.com/RtSmtYL.jpeg" alt="Ventus Breathe by Divine" />
+      <h3>Ventus Breathe by Divine</h3>
+      <p>Fresh, airy, and soul-touching — for moments that linger.</p>
+      <div class="counter">
+        <button onclick="decrease(this)">-</button>
+        <span>0</span>
+        <button onclick="increase(this)">+</button>
+      </div>
+    </div>
 
-  <div class="cart-info" aria-live="polite" aria-atomic="true">
-    Keranjang: <span id="cartCount">0</span> item
+    <div class="item" data-id="3" data-name="Ventus House of Manna" data-price="75000" data-img="https://i.imgur.com/a1VptEV.jpeg">
+      <img src="https://i.imgur.com/a1VptEV.jpeg" alt="Ventus House of Manna" />
+      <h3>Ventus House of Manna</h3>
+      <p>A divine scent that blends warmth and clarity in harmony.</p>
+      <div class="counter">
+        <button onclick="decrease(this)">-</button>
+        <span>0</span>
+        <button onclick="increase(this)">+</button>
+      </div>
+    </div>
   </div>
 
-  <button id="proceedCheckout" class="checkout-btn" type="button" aria-label="Lanjut ke halaman checkout">Proceed to Checkout</button>
-</main>
+  <div class="cart-icon" id="cartIcon">
+    <i class="fas fa-shopping-cart"></i>
+    <div class="cart-badge" id="cartBadge">0</div>
+  </div>
 
-<script>
-  // Data produk (harus sinkron dengan yang di HTML)
-  const products = {
-    1: { id: 1, name: "Produk 1", price: 100000 },
-    2: { id: 2, name: "Produk 2", price: 150000 },
-    3: { id: 3, name: "Produk 3", price: 200000 },
-  };
+  <aside class="cart-sidebar" id="cartSidebar">
+    <button class="cart-close" id="cartCloseBtn">&times;</button>
+    <h2>Your Cart</h2>
+    <div id="cartItemsContainer"><p>Your cart is empty.</p></div>
 
-  // Load keranjang dari localStorage atau mulai baru
-  let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    <div class="total-section">
+      <h3>Total: <span id="cartTotal">IDR 0</span></h3>
+      <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+    </div>
+  </aside>
 
-  const cartCountEl = document.getElementById('cartCount');
+  <script>
+    const cartIcon = document.getElementById('cartIcon');
+    const cartSidebar = document.getElementById('cartSidebar');
+    const cartCloseBtn = document.getElementById('cartCloseBtn');
+    const cartBadge = document.getElementById('cartBadge');
+    const cartItemsContainer = document.getElementById('cartItemsContainer');
+    const cartTotal = document.getElementById('cartTotal');
 
-  function updateCartCount() {
-    const totalItems = Object.values(cart).reduce((acc, item) => acc + item.qty, 0);
-    cartCountEl.textContent = totalItems;
-  }
+    let cartData = {};
 
-  function saveCart() {
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartCount();
-  }
-
-  function addToCart(productId) {
-    if (cart[productId]) {
-      cart[productId].qty += 1;
-    } else {
-      const prod = products[productId];
-      cart[productId] = { ...prod, qty: 1 };
+    function increase(button) {
+      const itemElement = button.closest('.item');
+      const span = itemElement.querySelector('.counter span');
+      let count = parseInt(span.textContent);
+      count++;
+      span.textContent = count;
+      updateCart(itemElement.dataset.id, itemElement);
     }
-    saveCart();
-  }
 
-  document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-    button.addEventListener('click', (e) => {
-      const productEl = e.target.closest('.product');
-      const productId = productEl.getAttribute('data-id');
-      addToCart(productId);
-      alert('Produk berhasil ditambahkan ke keranjang!');
+    function decrease(button) {
+      const itemElement = button.closest('.item');
+      const span = itemElement.querySelector('.counter span');
+      let count = parseInt(span.textContent);
+      if (count > 0) {
+        count--;
+        span.textContent = count;
+        updateCart(itemElement.dataset.id, itemElement);
+      }
+    }
+
+    function updateCart(id, itemElement) {
+      const count = parseInt(itemElement.querySelector('.counter span').textContent);
+
+      if (count > 0) {
+        cartData[id] = {
+          name: itemElement.dataset.name,
+          img: itemElement.dataset.img,
+          quantity: count,
+          price: parseInt(itemElement.dataset.price)
+        };
+      } else {
+        delete cartData[id];
+      }
+      updateCartBadge();
+      renderCartItems();
+    }
+
+    function updateCartBadge() {
+      const totalCount = Object.values(cartData).reduce((acc, item) => acc + item.quantity, 0);
+      cartBadge.style.display = totalCount > 0 ? 'block' : 'none';
+      cartBadge.textContent = totalCount;
+    }
+
+    function formatIDR(num) {
+      return 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function renderCartItems() {
+      cartItemsContainer.innerHTML = '';
+      const items = Object.values(cartData);
+      if (items.length === 0) {
+        cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
+        cartTotal.textContent = 'IDR 0';
+        return;
+      }
+
+      let total = 0;
+
+      items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+
+        const totalPrice = item.price * item.quantity;
+        total += totalPrice;
+
+        div.innerHTML = `
+          <img src="${item.img}" alt="${item.name}" />
+          <div class="cart-item-details">
+            <h4>${item.name}</h4>
+            <span>Quantity: ${item.quantity}</span>
+            <span>Price: ${formatIDR(item.price)}</span>
+            <span>Total: ${formatIDR(totalPrice)}</span>
+          </div>
+        `;
+
+        cartItemsContainer.appendChild(div);
+      });
+
+      cartTotal.textContent = formatIDR(total);
+    }
+
+    function toggleCart() {
+      cartSidebar.classList.toggle('open');
+    }
+
+    function checkout() {
+      alert('Thank you for your order! Proceeding to payment...');
+    }
+
+    cartIcon.addEventListener('click', toggleCart);
+    cartCloseBtn.addEventListener('click', toggleCart);
+
+    document.addEventListener('click', (e) => {
+      if (!cartSidebar.contains(e.target) && !cartIcon.contains(e.target) && cartSidebar.classList.contains('open')) {
+        toggleCart();
+      }
     });
-  });
-
-  document.getElementById('proceedCheckout').addEventListener('click', () => {
-    if (Object.keys(cart).length === 0) {
-      alert('Keranjang kosong. Silakan tambahkan produk terlebih dahulu.');
-      return;
-    }
-    // Buka halaman checkout.html
-    window.location.href = 'checkout.html';
-  });
-
-  // Initialize count saat load halaman
-  updateCartCount();
-</script>
-
+  </script>
 </body>
 </html>
