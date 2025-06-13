@@ -28,7 +28,8 @@
 .slider img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain; /* Gambar tidak dipotong, tapi bisa muncul area kosong */
+  background-color: #000; /* Tambahan opsional agar latar belakang terlihat rapi */
 }
 
 @keyframes slide {
