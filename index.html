@@ -9,15 +9,28 @@
   <title>Catalog with Cart</title>
 
   <style>
+<style>
 .slider-container {
   width: 100%;
-  max-width: 1800px; /* Ukuran maksimal slider */
-  height: 200px;     /* Tinggi slider */
+  max-width: 1800px;
   overflow: hidden;
-  margin: 40px auto;
-  border-radius: 12px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.15);
+  margin: auto;
 }
+
+.slider {
+  display: flex;
+  width: 300%; /* 3 gambar */
+  transition: transform 0.5s ease-in-out;
+}
+
+.slider img {
+  width: 100%;
+  height: auto;
+  flex: 0 0 100%;
+  object-fit: cover;
+}
+</style>
+
 
 .slider {
   display: flex;
@@ -333,11 +346,12 @@
 
   <div class="slider-container">
   <div class="slider" id="imageSlider">
-    <img src="https://i.imgur.com/d0TLtWq.jpeg" alt="Ventus 1" />
-    <img src="https://i.imgur.com/RtSmtYL.jpeg" alt="Ventus 2" />
-    <img src="https://i.imgur.com/a1VptEV.jpeg" alt="Ventus 3" />
+    <img src="https://i.imgur.com/d0TLtWq.jpeg" alt="Ventus 1">
+    <img src="https://i.imgur.com/RtSmtYL.jpeg" alt="Ventus 2">
+    <img src="https://i.imgur.com/a1VptEV.jpeg" alt="Ventus 3">
   </div>
 </div>
+
 
   <div class="catalog-items">
     <div class="item" data-id="1" data-name="Ventus Fell In Eden" data-price="75000" data-img="https://i.imgur.com/d0TLtWq.jpeg">
