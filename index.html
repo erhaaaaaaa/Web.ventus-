@@ -526,6 +526,17 @@
     }
 
     loadCartFromStorage();
+    <script>
+  const slider = document.getElementById('imageSlider');
+  const images = slider.querySelectorAll('img');
+  let currentIndex = 0;
+
+  setInterval(() => {
+    currentIndex = (currentIndex + 1) % images.length;
+    slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+  }, 4000); // ⏱️ ganti 4000 (4 detik) sesuai kecepatan yang kamu mau (dalam milidetik)
+</script>
+
   </script>
 </body>
 </html>
