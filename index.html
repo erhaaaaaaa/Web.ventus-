@@ -19,44 +19,6 @@
   box-shadow: 0 0 12px rgba(0,0,0,0.15);
 }
 
-.slider {
-  display: flex;
-  width: 300%;
-  animation: scroll 60s infinite linear;
-}
-
-.slider img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain; /* Gambar tidak dipotong, tapi bisa muncul area kosong */
-  background-color: #000; /* Tambahan opsional agar latar belakang terlihat rapi */
-}
-
-@keyframes slide {
-  0%   { transform: translateX(0%); }
-  33%  { transform: translateX(-100%); }
-  66%  { transform: translateX(-200%); }
-  100% { transform: translateX(0%); }
-}
-
-.slider {
-  display: flex;
-  width: 300%;
-  animation: slide 12s infinite;
-}
-
-.slider img {
-  width: 100%;
-  object-fit: cover;
-}
-
-@keyframes scroll {
-  0%   { transform: translateX(0%); }
-  33%  { transform: translateX(-50%); }
-  66%  { transform: translateX(-50%); }
-  100% { transform: translateX(0%); }
-}
-
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
